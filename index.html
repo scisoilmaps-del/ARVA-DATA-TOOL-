@@ -1450,8 +1450,20 @@ const tillageF=[
   {id:'eventGTIR',label:'Event gTIR',type:'number',req:false,step:'0.001',calc:true},
   {id:'notes',label:'Notes',type:'text',req:false}
 ];
+const RICE_WATER_METHODS=[
+  'Alternate Wetting and Drying (AWD) (Rice Only)',
+  'Multiple Inlet Rice Irrigation (MIRI) (Rice Only)',
+  'Row Rice (Rice Only)',
+  'Zero-grade (Rice Only)',
+  'Cascade Irrigation (Rice Only)',
+  'Winter Flooding (Rice Only)'
+];
+const BASE_IRRIGATION_METHODS=['Continuous Flood (CF)','AWD — Single Aeration','AWD — Multiple Aerations','Pivot / Sprinkler System','Drip Irrigation','Other'];
+const DRAINAGE_TYPES=['No artificial drainage','Surface drainage','Subsurface / tile drainage','Open ditch drainage','Controlled drainage / outlet management','Tailwater recovery drainage','Other'];
 const irrF=[
-  {id:'season',label:'Irrigation system type',type:'select',opts:['Continuous Flood (CF)','AWD — Single Aeration','AWD — Multiple Aerations','Pivot / Sprinkler System','Drip Irrigation','Other'],req:true},
+  {id:'cropPractice',label:'Crop / practice type',type:'select',opts:['Non-rice crop','Rice Farming'],req:true},
+  {id:'season',label:'Water / irrigation method',type:'select',opts:BASE_IRRIGATION_METHODS,req:true},
+  {id:'drainageType',label:'Drainage type',type:'select',opts:DRAINAGE_TYPES,req:false},
   {id:'cropYear',label:'Crop / year',type:'text',req:false,placeholder:'e.g. Rice 2026'},
   {id:'pumpName',label:'Pump name',type:'text',req:true,placeholder:'e.g. Weining Pump'},
   {id:'waterSource',label:'Water source',type:'select',opts:['Well','Surface water','Municipal','Tailwater recovery','Other'],req:true},
@@ -1486,14 +1498,33 @@ function fieldInputHtml(prefix, idx, f){
   const ro=f.calc ? ' readonly' : '';
   if(f.type==='select'){
     const opts=['',...(f.opts||[])].map(o=>`<option value="${escAttr(o)}">${escAttr(o || 'Select')}</option>`).join('');
-    return `<div><label class="fl" for="${id}">${escAttr(f.label)}${req}</label><select id="${id}" class="dyn-input${calc}"${ro}>${opts}</select></div>`;
+    return `<div id="${id}_wrap"><label class="fl" for="${id}">${escAttr(f.label)}${req}</label><select id="${id}" class="dyn-input${calc}"${ro}>${opts}</select></div>`;
   }
   if(f.type==='textarea'){
-    return `<div><label class="fl" for="${id}">${escAttr(f.label)}${req}</label><textarea id="${id}" class="dyn-input${calc}"${ph}${ro}></textarea></div>`;
+    return `<div id="${id}_wrap"><label class="fl" for="${id}">${escAttr(f.label)}${req}</label><textarea id="${id}" class="dyn-input${calc}"${ph}${ro}></textarea></div>`;
   }
   const type=f.type || 'text';
-  return `<div><label class="fl" for="${id}">${escAttr(f.label)}${req}</label><input id="${id}" class="dyn-input${calc}" type="${escAttr(type)}"${step}${min}${max}${ph}${ro}></div>`;
+  return `<div id="${id}_wrap"><label class="fl" for="${id}">${escAttr(f.label)}${req}</label><input id="${id}" class="dyn-input${calc}" type="${escAttr(type)}"${step}${min}${max}${ph}${ro}></div>`;
 }
+function updateIrrigationRiceOptions(idx){
+  const cropEl=document.getElementById(`irr_${idx}_cropPractice`);
+  const methodEl=document.getElementById(`irr_${idx}_season`);
+  const awdEl=document.getElementById(`irr_${idx}_awdEvents`);
+  const awdWrap=document.getElementById(`irr_${idx}_awdEvents_wrap`);
+  if(!cropEl || !methodEl) return;
+  const current=methodEl.value;
+  const isRice=cropEl.value==='Rice Farming';
+  const opts=['',...BASE_IRRIGATION_METHODS,...(isRice ? RICE_WATER_METHODS : [])];
+  methodEl.innerHTML=opts.map(o=>`<option value="${escAttr(o)}">${escAttr(o || 'Select')}</option>`).join('');
+  methodEl.value=opts.includes(current) ? current : '';
+  if(awdWrap){
+    awdWrap.style.display=isRice ? '' : 'none';
+  }
+  if(!isRice && awdEl){
+    awdEl.value='';
+  }
+}
+
 function runEntryCalculations(prefix, idx){
   if(prefix==='fert') updateFertilizerUnits(idx);
   if(prefix==='cp') updateIPMUnits(idx);
@@ -1506,7 +1537,7 @@ function runEntryCalculations(prefix, idx){
     }
     updateGTIR(idx);
   }
-  if(prefix==='irr') updateWaterLog(idx);
+  if(prefix==='irr') { updateIrrigationRiceOptions(idx); updateWaterLog(idx); }
 }
 function addDyn(prefix, label, fields, values={}){
   const wrap=document.getElementById(`${prefix}-entries`);
@@ -1525,6 +1556,14 @@ function addDyn(prefix, label, fields, values={}){
   fields.forEach(f=>{
     const el=document.getElementById(`${prefix}_${idx}_${f.id}`);
     if(el && values && values[f.id]!==undefined) el.value=values[f.id];
+  });
+  if(prefix==='irr'){
+    updateIrrigationRiceOptions(idx);
+    const methodEl=document.getElementById(`irr_${idx}_season`);
+    if(methodEl && values && values.season!==undefined) methodEl.value=values.season;
+  }
+  fields.forEach(f=>{
+    const el=document.getElementById(`${prefix}_${idx}_${f.id}`);
     if(el){
       el.addEventListener('input',()=>{ runEntryCalculations(prefix,idx); updateAll(); });
       el.addEventListener('change',()=>{ runEntryCalculations(prefix,idx); updateAll(); });
@@ -2203,6 +2242,8 @@ function baseCropForceRow(data, section, recordType, i){
     'Tillage Depth (inches)': '',
     'Calculated gTIR Score': '',
     // Irrigation
+    'Crop / Practice Type': '',
+    'Drainage Type': '',
     'Water Source': '',
     'Pump Flow Rate (GPM)': '',
     'Min Hours per Cycle': '',
@@ -2450,6 +2491,8 @@ function flattenForCSV(data){
     r['Crop']=a.cropYear||'';
     r['Category']=a.season||'';
     r['Product or Activity']=a.pumpName||'';
+    r['Crop / Practice Type']=a.cropPractice||'';
+    r['Drainage Type']=a.drainageType||'';
     r['Water Source']=a.waterSource||'';
     r['Pump Flow Rate (GPM)']=a.pumpGPM||'';
     r['Min Hours per Cycle']=a.minHoursCycle||'';
