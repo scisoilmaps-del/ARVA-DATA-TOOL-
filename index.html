@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>2026 Arva Program Data Requirements</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<title>Arva Program Data Requirements</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --green:#1D9E75;--green-lt:#E1F5EE;--green-dk:#085041;--green-mid:#0F6E56;
@@ -231,9 +231,106 @@ input.calculated-field{background:var(--green-lt);border-color:rgba(15,110,86,.2
 .tool-import-card .uzone-btn{padding:4px 10px;font-size:11px;}
 input.readonly-calc{background:var(--green-lt);border-color:rgba(15,110,86,.22);color:var(--green-dk);font-weight:700;}
 
+
+/* ── WIZARD OVERRIDES ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;}
+
+/* Hide old layout */
+.app-wrap,.sidebar,.main,.page-hdr,.upload-grid{display:none!important;}
+
+/* Wizard shell */
+body{background:var(--surface);margin:0;font-family:var(--font);}
+
+.wz-shell{min-height:100vh;display:flex;flex-direction:column;}
+
+/* Top bar */
+.wz-topbar{background:var(--green-dk);height:62px;display:flex;align-items:center;padding:0 2rem;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25);}
+.wz-logo{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.wz-topbar-title{font-size:15px;font-weight:600;color:#fff;flex:1;}
+.wz-topbar-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:1px;}
+.wz-progress-bar{height:3px;background:var(--green-dk);position:sticky;top:62px;z-index:99;}
+.wz-progress-fill{height:100%;background:var(--green);transition:width .4s ease;border-radius:0 3px 3px 0;}
+
+/* Step indicator strip */
+.wz-step-strip{background:#fff;border-bottom:1px solid var(--border);padding:0 2rem;overflow-x:auto;display:flex;gap:0;white-space:nowrap;scrollbar-width:none;}
+.wz-step-strip::-webkit-scrollbar{display:none;}
+.wz-step-pill{display:inline-flex;align-items:center;gap:7px;padding:12px 16px 10px;cursor:pointer;border-bottom:3px solid transparent;font-size:12.5px;color:var(--gray);transition:all .15s;flex-shrink:0;}
+.wz-step-pill:hover{color:var(--eerie);border-bottom-color:var(--border);}
+.wz-step-pill.active{color:var(--green-dk);border-bottom-color:var(--green);font-weight:600;}
+.wz-step-pill.done .wz-step-num{background:var(--green);color:#fff;}
+.wz-step-pill.active .wz-step-num{background:var(--green-dk);color:#fff;}
+.wz-step-num{width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gray);flex-shrink:0;transition:all .15s;}
+.wz-step-ico{font-size:14px;}
+
+/* Main step content */
+.wz-body{flex:1;display:flex;flex-direction:column;}
+.wz-step-view{display:none;flex:1;flex-direction:column;}
+.wz-step-view.active{display:flex;}
+
+.wz-step-content{flex:1;max-width:820px;margin:0 auto;width:100%;padding:2rem 2rem 6rem;}
+
+/* Step header */
+.wz-step-hdr{margin-bottom:1.75rem;}
+.wz-step-hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:.4rem;}
+.wz-step-hdr-ico{width:44px;height:44px;border-radius:12px;background:var(--green-lt);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.wz-step-num-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green-dk);background:var(--green-lt);padding:3px 10px;border-radius:20px;}
+.wz-step-hdr h2{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--eerie);margin:0 0 4px;}
+.wz-step-hdr p{font-size:13.5px;color:var(--gray);line-height:1.6;margin:0;}
+
+/* Card wrapper for content */
+.wz-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1rem;}
+.wz-card .sec-body{display:block!important;padding:1.25rem;border:none;}
+
+/* Upload cards in wizard */
+.wz-upload-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem;}
+@media(max-width:600px){.wz-upload-pair{grid-template-columns:1fr;}}
+.wz-ucard{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.wz-ucard-hdr{padding:.6rem 1rem;background:var(--gray-lt);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.wz-ucard-hdr h3{font-size:13px;font-weight:600;margin:0;}
+.wz-ucard-hdr span{font-size:11px;color:var(--gray);}
+.wz-ucard-body{padding:.75rem;}
+.wz-ucard .uzone{min-height:120px;}
+
+/* Bottom nav */
+.wz-footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:.85rem 2rem;display:flex;align-items:center;gap:12px;z-index:50;box-shadow:0 -4px 20px rgba(0,0,0,.06);}
+.wz-footer-left{flex:1;display:flex;align-items:center;gap:10px;}
+.wz-footer-status{font-size:12px;color:var(--gray);}
+.wz-footer-status strong{color:var(--green-dk);}
+.wz-prac-mini{font-size:11.5px;background:var(--green-lt);color:var(--green-dk);border:1px solid rgba(15,110,86,.22);padding:3px 10px;border-radius:20px;font-weight:600;}
+.wz-prac-mini.warn{background:var(--red-lt);color:var(--red-dk);border-color:rgba(216,90,48,.22);}
+.btn-wz-prev{padding:9px 20px;background:transparent;color:var(--gray);border:1.5px solid var(--border);border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .14s;}
+.btn-wz-prev:hover{border-color:var(--green-mid);color:var(--green-dk);}
+.btn-wz-next{padding:9px 24px;background:var(--green-dk);color:#fff;border:none;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .14s;display:flex;align-items:center;gap:6px;}
+.btn-wz-next:hover{background:var(--green-mid);}
+.btn-wz-next.is-export{background:var(--green);}
+.btn-wz-next.is-export:hover{background:var(--green-mid);}
+.wz-step-counter{font-size:12px;color:var(--gray-mid);white-space:nowrap;}
+
+/* Export step special */
+.wz-export-card{background:var(--green-dk);border-radius:16px;padding:2rem;color:#fff;text-align:center;margin-bottom:1rem;}
+.wz-export-card h3{font-size:22px;font-weight:700;margin-bottom:.5rem;}
+.wz-export-card p{font-size:14px;opacity:.75;margin-bottom:1.5rem;}
+.btn-export-big{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:#fff;color:var(--green-dk);border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;}
+.btn-export-big:hover{background:var(--green-lt);}
+.wz-comp-summary{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
+.wz-comp-title{font-size:13px;font-weight:600;margin-bottom:.75rem;color:var(--eerie);}
+.wz-extra-btns{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;}
+
+/* Animate step transitions */
+@keyframes stepIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.wz-step-view.active .wz-step-content{animation:stepIn .25s ease;}
+
+/* Hidden but functional old DOM elements */
+.sec-card{display:none!important;}
+.export-sec{display:none!important;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
+
+<!-- OLD DOM (hidden, keeps all IDs/JS working) -->
+<div style="display:none" aria-hidden="true">
+
 <header class="app-header">
 <div class="hdr-left">
 <div class="hdr-mark">🌱</div>
@@ -409,7 +506,7 @@ input.readonly-calc{background:var(--green-lt);border-color:rgba(15,110,86,.22);
 <div class="sec-card" id="card-manure">
 <div class="sec-hdr" onclick="toggle('manure')">
 <div class="sec-ico">♻️</div>
-<div class="sec-info"><div class="sec-title">Manure (organic fertilizer)</div><div class="sec-sub">Animal manure, compost, green manure — 2026 only</div></div>
+<div class="sec-info"><div class="sec-title">Manure (organic fertilizer)</div><div class="sec-sub">Animal manure, compost, green manure — selected program year</div></div>
 <span class="sec-stat" id="status-manure">Not started</span>
 <span class="chev" id="chev-manure">▾</span>
 </div>
@@ -435,7 +532,7 @@ input.readonly-calc{background:var(--green-lt);border-color:rgba(15,110,86,.22);
 <div class="sec-card" id="card-harvest">
 <div class="sec-hdr" onclick="toggle('harvest')">
 <div class="sec-ico">🌽</div>
-<div class="sec-info"><div class="sec-title">Harvest</div><div class="sec-sub">2026 only</div></div>
+<div class="sec-info"><div class="sec-title">Harvest</div><div class="sec-sub">Selected program year</div></div>
 <span class="sec-stat" id="status-harvest">Not started</span>
 <span class="chev" id="chev-harvest">▾</span>
 </div>
@@ -453,12 +550,22 @@ input.readonly-calc{background:var(--green-lt);border-color:rgba(15,110,86,.22);
 <span class="chev" id="chev-tillage">▾</span>
 </div>
 <div class="sec-body" id="body-tillage">
-
-
+<div style="background:var(--green-lt);border:1px solid rgba(15,110,86,.22);border-radius:11px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+  <div style="flex:1;min-width:220px;">
+    <div style="font-size:12.5px;font-weight:700;color:var(--green-dk);margin-bottom:2px;">🌱 No Till for this program year?</div>
+    <div style="font-size:11.5px;color:var(--gray);line-height:1.4;">Select this to skip the tillage log entirely. The field will be recorded as no-till with a gTIR of 0.</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+    <button class="yn-btn" id="yn-notill-yes" onclick="setYN('notill','yes');toggleNoTill()" style="padding:6px 18px;font-size:13px;">No Till</button>
+    <button class="yn-btn" id="yn-notill-no" onclick="setYN('notill','no');toggleNoTill()" style="padding:6px 18px;font-size:13px;">Has Tillage</button>
+  </div>
+</div>
+<div id="tillage-log-section">
 <div class="note">Manual inputs follow the Tillage Intensity tool logic exactly: rating × 3.25 × depth cm × disturbed fraction × passes. Upload a Tillage CSV or add events manually.</div>
 <div class="tool-import-row"><div class="tool-import-card"><div class="uzone" id="tillagePlanZone"><div class="uzone-icon">🚜</div><span class="uzone-lbl">Upload Tillage CSV</span><div class="uzone-hint">CSV exported from the SCI gTIR tool</div><button class="uzone-btn" onclick="event.stopPropagation();document.getElementById('tillagePlanInput').click()" type="button">Choose Tillage CSV</button><input accept=".csv,.txt" class="file-real" id="tillagePlanInput" onchange="if(this.files && this.files[0]) handleTillagePlanCSV(this.files[0])" type="file"/><div class="uzone-status" id="tillagePlanStatus"></div></div></div></div>
-        <div id="tillage-entries"></div>
+<div id="tillage-entries"></div>
 <button class="add-btn" onclick="addDyn('tillage','Tillage event',tillageF)">+ Add tillage event</button>
+</div>
 </div>
 </div>
 <!-- IRRIGATION -->
@@ -470,11 +577,23 @@ input.readonly-calc{background:var(--green-lt);border-color:rgba(15,110,86,.22);
 <span class="chev" id="chev-irr">▾</span>
 </div>
 <div class="sec-body" id="body-irr">
-<div id="irr-entries"></div>
-<button class="add-btn" onclick="addDyn('irr','Irrigation entry',irrF)">+ Add irrigation entry</button>
+<div style="background:var(--green-lt);border:1px solid rgba(15,110,86,.22);border-radius:11px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+  <div style="flex:1;min-width:220px;">
+    <div style="font-size:12.5px;font-weight:700;color:var(--green-dk);margin-bottom:2px;">🌧 No Irrigation — Rain Fed Only?</div>
+    <div style="font-size:11.5px;color:var(--gray);line-height:1.4;">Select this to skip the irrigation log entirely. No pump or cycle data required.</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+    <button class="yn-btn" id="yn-rainfed-yes" onclick="setYN('rainfed','yes');toggleRainFed()" style="padding:6px 18px;font-size:13px;">Rain Fed Only</button>
+    <button class="yn-btn" id="yn-rainfed-no" onclick="setYN('rainfed','no');toggleRainFed()" style="padding:6px 18px;font-size:13px;">Uses Irrigation</button>
+  </div>
+</div>
+<div id="irr-log-section">
+  <div id="irr-entries"></div>
+  <button class="add-btn" onclick="addDyn('irr','Irrigation entry',irrF)">+ Add irrigation entry</button>
+</div>
 <div class="subsec"><div class="subsec-title">Additional attestations</div>
 <div class="yn-row"><span class="yn-lbl">Attest to any flooding for wildlife</span><div class="yn-btns"><button class="yn-btn" id="yn-wildlife-yes" onclick="setYN('wildlife','yes')">Yes</button><button class="yn-btn" id="yn-wildlife-no" onclick="setYN('wildlife','no')">No</button></div></div>
-<div style="margin-top:9px;"><label class="fl">Rice only: number of AWD events performed</label><input id="awd-count" min="0" oninput="updateAll()" placeholder="Count (rice fields only)" style="max-width:240px;" type="number"/></div>
+<input type="hidden" id="awd-count" value=""/>
 </div>
 </div>
 </div>
@@ -532,7 +651,45 @@ input.readonly-calc{background:var(--green-lt);border-color:rgba(15,110,86,.22);
 </div>
 </main>
 </div>
+
+</div>
+
+<!-- WIZARD UI -->
+<div class="wz-shell">
+
+  <div class="wz-topbar">
+    <div class="wz-logo">🌱</div>
+    <div>
+      <div class="wz-topbar-title">Arva Program Data Requirements</div>
+      <div class="wz-topbar-sub">Soil and Climate Initiative</div>
+    </div>
+  </div>
+  <div class="wz-progress-bar"><div class="wz-progress-fill" id="wz-prog-fill" style="width:0%"></div></div>
+
+  <!-- Step tabs strip -->
+  <div class="wz-step-strip" id="wz-step-strip">
+    <!-- Filled by JS -->
+  </div>
+
+  <div class="wz-body" id="wz-body">
+    <!-- Steps filled by JS -->
+  </div>
+
+  <!-- Footer nav -->
+  <div class="wz-footer">
+    <div class="wz-footer-left">
+      <span class="wz-footer-status" id="wz-footer-status"><strong>0%</strong> complete</span>
+      <span class="wz-prac-mini warn" id="wz-prac-mini">0 / 3 practices</span>
+    </div>
+    <span class="wz-step-counter" id="wz-step-counter">Step 1 of 13</span>
+    <button class="btn-wz-prev" id="wz-prev-btn" onclick="wizardPrev()">← Back</button>
+    <button class="btn-wz-next" id="wz-next-btn" onclick="wizardNext()">Continue →</button>
+  </div>
+
+</div>
+
 <script>
+
 // ── STATE ──────────────────────────────────────────────────────
 let csvData = null, kmlData = null;
 let importedToolData = {crop:0,fert:0,ipm:0,tillage:0};
@@ -1095,6 +1252,8 @@ function handleCSV(file){
   const r=new FileReader();
   r.onload=ev=>{
     try{
+      window._rawCsvText=ev.target.result;
+      window._rawCsvName=file.name;
       const result=parseCSV(ev.target.result);
       csvData=result.rows;
       zone.classList.add('loaded');zone.classList.remove('err');
@@ -1120,6 +1279,8 @@ function handleKML(file){
   const r=new FileReader();
   r.onload=ev=>{
     try{
+      window._rawKmlText=ev.target.result;
+      window._rawKmlName=file.name;
       kmlData=parseKML(ev.target.result);
       const fields=kmlData.filter(isFieldBoundary);
       zone.classList.add('loaded');zone.classList.remove('err');
@@ -1279,7 +1440,7 @@ const tillageF=[
   {id:'cropTotalGTIR',label:'Crop Total gTIR',type:'number',req:false,step:'0.001',calc:true},
   {id:'date',label:'Tillage Date',type:'date',req:true},
   {id:'implement',label:'Implement',type:'text',req:true,placeholder:'e.g. field cultivator, disk'},
-  {id:'tillageType',label:'Tillage Type',type:'select',opts:['Inversion some mixing (1)','Mixing + some inversion (0.8)','Lifting and fracturing (0.4)','Mixing only (0.7)','Compression (0.15)'],req:true},
+  {id:'tillageType',label:'Tillage Type',type:'select',opts:['No Till (0)','Inversion some mixing (1)','Mixing + some inversion (0.8)','Lifting and fracturing (0.4)','Mixing only (0.7)','Compression (0.15)'],req:true},
   {id:'rating',label:'Rating',type:'number',req:false,step:'0.01',calc:true},
   {id:'depth',label:'Depth (in)',type:'number',req:true,step:'0.1'},
   {id:'depthCm',label:'Depth (cm)',type:'number',req:false,step:'0.1',calc:true},
@@ -1290,7 +1451,7 @@ const tillageF=[
   {id:'notes',label:'Notes',type:'text',req:false}
 ];
 const irrF=[
-  {id:'season',label:'Irrigation type',type:'select',opts:['In-season irrigation','Preseason irrigation','Other'],req:true},
+  {id:'season',label:'Irrigation system type',type:'select',opts:['Continuous Flood (CF)','AWD — Single Aeration','AWD — Multiple Aerations','Pivot / Sprinkler System','Drip Irrigation','Other'],req:true},
   {id:'cropYear',label:'Crop / year',type:'text',req:false,placeholder:'e.g. Rice 2026'},
   {id:'pumpName',label:'Pump name',type:'text',req:true,placeholder:'e.g. Weining Pump'},
   {id:'waterSource',label:'Water source',type:'select',opts:['Well','Surface water','Municipal','Tailwater recovery','Other'],req:true},
@@ -1299,8 +1460,7 @@ const irrF=[
   {id:'maxHoursCycle',label:'Max hrs / cycle',type:'number',req:true,placeholder:'e.g. 30'},
   {id:'minCyclesYear',label:'Min cycles / year',type:'number',req:true,placeholder:'e.g. 4'},
   {id:'maxCyclesYear',label:'Max cycles / year',type:'number',req:true,placeholder:'e.g. 4'},
-  {id:'minWaterDepthIn',label:'Min water depth (in)',type:'number',req:false,placeholder:'e.g. 1'},
-  {id:'maxWaterDepthIn',label:'Max water depth (in)',type:'number',req:false,placeholder:'e.g. 2.5'}
+  {id:'awdEvents',label:'AWD events performed',type:'number',req:false,placeholder:'e.g. 3 (AWD types only)'},
 ];
 const fpaF=[
   {id:'name',label:'FPA name',type:'text',req:true,placeholder:'Elevator or facility name'},
@@ -1512,7 +1672,6 @@ function updateWaterLog(idx){
     <div class="calc-pill"><span>G/cycle</span><b>${fmtNum(v.gallonsCycle,0)}</b></div>
     <div class="calc-pill"><span>G/year</span><b>${fmtNum(v.gallonsYear,0)}</b></div>
     <div class="calc-pill"><span>Acre-feet annually</span><b>${fmtNum(v.acreFeet,2)}</b></div>
-    <div class="calc-pill"><span>Flood-equivalent events/ac</span><b>${fmtNum(v.floodEq,2)}</b></div>
   </div>`;
 }
 
@@ -1678,35 +1837,71 @@ function cropPlannerRows(){
     const totalCropLri=lriNum(crop.querySelector('.crop-lri-total2')?.textContent);
     const annualCropLivingRootPct=Math.max(0,totalCropLri)*100;
     const cropInterpret=crop.querySelector('.crop-interpret2')?.textContent||'';
+
+    // Collect cash, pre, post entries as objects
+    const entryData={};
     crop.querySelectorAll('.plan-entry2').forEach(entry=>{
       const type=entry.dataset.entryType;
-      if(type!=='cash' && !cropPlannerEntryStarted(entry)) return;
       const plantingDate=entry.querySelector('.planting-date2')?.value||'';
       const harvestDate=entry.querySelector('.harvest-date2')?.value||'';
-      const rootDays=daysBetweenCropDates(plantingDate,harvestDate);
-      const lri=calcLriFromDates(plantingDate,harvestDate);
       const entryCrop=(entry.querySelector('.entry-crop2')?.value||'').trim();
-      const hasEntry=entryCrop || plantingDate || harvestDate || (entry.querySelector('.notes2')?.value||'').trim();
-      if(!hasEntry && !cropPageName && !cropAcres && !cropFields && !cropYear) return;
-      rows.push({
-        year:entry.querySelector('.planting-year2')?.value||cropYear,
-        cropType:entryCrop,
-        cropPageName,
-        cropAcres,
-        cropFields,
+      entryData[type]={
+        crop:entryCrop,
+        variety:entry.querySelector('.variety2')?.value||'',
+        seedingRate:entry.querySelector('.seeding-rate2')?.value||'',
         plantingDate,
         harvestDate,
         terminationStyle:entry.querySelector('.termination-style2')?.value||'',
-        inputCategory:cropPlannerTypeLabel(type),
-        variety:entry.querySelector('.variety2')?.value||'',
-        seedingRate:entry.querySelector('.seeding-rate2')?.value||'',
-        livingRootDays:rootDays,
-        lri:lriFmt(lri,3),
-        totalCropLri:lriFmt(totalCropLri,3),
-        annualCropLivingRootPct:lriFmt(annualCropLivingRootPct,1)+'%',
-        cropLriInterpretation:cropInterpret,
-        notes:entry.querySelector('.notes2')?.value||''
-      });
+        lri:lriFmt(calcLriFromDates(plantingDate,harvestDate),3),
+        livingRootDays:daysBetweenCropDates(plantingDate,harvestDate),
+        notes:entry.querySelector('.notes2')?.value||'',
+        started:!!(entryCrop||plantingDate||harvestDate)
+      };
+    });
+
+    const cash=entryData['cash']||{};
+    const pre=entryData['pre']||{};
+    const post=entryData['post']||{};
+    if(!cropPageName && !cropAcres && !cash.crop) return;
+
+    rows.push({
+      year:cash.plantingDate ? cash.plantingDate.slice(0,4) : cropYear,
+      cropType:cash.crop||'',
+      cropPageName,
+      cropAcres,
+      cropFields,
+      // Cash crop
+      plantingDate:cash.plantingDate||'',
+      harvestDate:cash.harvestDate||'',
+      terminationStyle:cash.terminationStyle||'',
+      variety:cash.variety||'',
+      seedingRate:cash.seedingRate||'',
+      livingRootDays:cash.livingRootDays||'',
+      lri:cash.lri||'',
+      inputCategory:'Cash Crop',
+      // Pre-season cover crop (own columns)
+      preSeasonCoverCrop:pre.crop||'',
+      preSeasonVariety:pre.variety||'',
+      preSeasonPlantingDate:pre.plantingDate||'',
+      preSeasonTerminationDate:pre.harvestDate||'',
+      preSeasonTerminationStyle:pre.terminationStyle||'',
+      preSeasonLRI:pre.started ? pre.lri : '',
+      preSeasonLivingRootDays:pre.started ? pre.livingRootDays : '',
+      preSeasonNotes:pre.notes||'',
+      // Post-harvest cover crop (own columns)
+      postHarvestCoverCrop:post.crop||'',
+      postHarvestVariety:post.variety||'',
+      postHarvestPlantingDate:post.plantingDate||'',
+      postHarvestTerminationDate:post.harvestDate||'',
+      postHarvestTerminationStyle:post.terminationStyle||'',
+      postHarvestLRI:post.started ? post.lri : '',
+      postHarvestLivingRootDays:post.started ? post.livingRootDays : '',
+      postHarvestNotes:post.notes||'',
+      // Totals
+      totalCropLri:lriFmt(totalCropLri,3),
+      annualCropLivingRootPct:lriFmt(annualCropLivingRootPct,1)+'%',
+      cropLriInterpretation:cropInterpret,
+      notes:cash.notes||''
     });
   });
   return rows;
@@ -1852,7 +2047,7 @@ function updateAll(){
 // ── DATA COLLECTION ────────────────────────────────────────────
 function collectData(){
   const data={
-    meta:{program:'2026 Arva',generated:new Date().toISOString()},
+    meta:{program:'ARVA',generated:new Date().toISOString()},
     files:{csvLoaded:!!csvData,csvSampleCount:csvData?csvData.length:0,kmlLoaded:!!kmlData,kmlBoundaryCount:kmlData?kmlData.filter(isFieldBoundary).length:0,kmlBoundaryNames:kmlData?kmlData.filter(isFieldBoundary).map(b=>b.name):[],importedToolData:{...importedToolData}},
     farmInfo:{farmName:document.getElementById('farm-name')?.value||'',totalAcres:document.getElementById('total-acres')?.value||'',totalFields:document.getElementById('total-fields')?.value||'',cropCount:document.getElementById('crop-count')?.value||'',planningYear:document.getElementById('planning-year')?.value||'',preparedBy:document.getElementById('prepared-by')?.value||''},
     boundary:{source:kmlData?'Uploaded KML':'',fieldNames:kmlData?kmlData.filter(isFieldBoundary).map(b=>b.name):[]},
@@ -1860,8 +2055,8 @@ function collectData(){
     cropRotation:[],
     cropProtection:{applications:[],ipm:YN['ipm']||'',iwm:YN['iwm']||'',idm:YN['idm']||''},
     fertilizer:{applications:[],ninh:YN['ninh']||'',slowRelease:YN['slowrel']||'',vrt:YN['vrt']||'',nmp:YN['nmp']||'',fourR:YN['4r']||''},
-    manure:[],soilAmendments:[],harvest:[],coverCropping:[],tillage:[],
-    irrigation:{events:[],wildlifeFlooding:YN['wildlife']||'',awdCount:document.getElementById('awd-count')?.value||''},
+    manure:[],soilAmendments:[],harvest:[],coverCropping:[],tillage:[],noTillOnly:YN['notill']==='yes',
+    irrigation:{events:[],rainFedOnly:YN['rainfed']==='yes',wildlifeFlooding:YN['wildlife']||'',awdCount:(()=>{let t=0;document.querySelectorAll('#irr-entries [id$="_awdEvents"]').forEach(el=>{t+=parseFloat(el.value||0)||0;});return t||'';})()},
     soilSampling:{method:document.getElementById('soil-method')?.value||'',lab:document.getElementById('soil-lab')?.value||'',resultsRef:document.getElementById('soil-pdf')?.value||'',gridGeoRef:document.getElementById('soil-geo')?.value||'',boundaries:collectSoilSamplingRows()},
     firstPointOfAggregation:[],
     qualifyingPractices:PRACTICES.filter(p=>p.check()).map(p=>p.label)
@@ -1941,100 +2136,96 @@ function nutrientUnitsFromPercents(rate,unit,nPct,pPct,kPct){
 function baseCropForceRow(data, section, recordType, i){
   const f=data.farmInfo||{};
   return {
-    farm_name: cleanVal(f.farmName || data.field?.farm),
-    total_farm_acres: cleanVal(f.totalAcres),
-    total_fields: cleanVal(f.totalFields),
-    planning_year: cleanVal(f.planningYear),
-    prepared_by: cleanVal(f.preparedBy),
-    section: section,
-    record_type: recordType,
-    record_number: i,
-    field_name: '',
-    crop: '',
-    crop_year: '',
-    acres: '',
-    date: '',
-    start_date: '',
-    end_date: '',
-    product_or_activity: '',
-    category: '',
-    method: '',
-    rate: '',
-    rate_unit: '',
-    notes: '',
+    'Farm Name': cleanVal(f.farmName || data.field?.farm),
+    'Total Farm Acres': cleanVal(f.totalAcres),
+    'Total Fields': cleanVal(f.totalFields),
+    'Planning Year': cleanVal(f.planningYear),
+    'Prepared By': cleanVal(f.preparedBy),
+    'Data Section': section,
+    'Record Type': recordType,
+    'Record Number': i,
+    'Field Name': '',
+    'Crop': '',
+    'Crop Year': '',
+    'Acres': '',
+    'Date': '',
+    'Start Date': '',
+    'End Date': '',
+    'Product or Activity': '',
+    'Category': '',
+    'Application Method': '',
+    'Rate': '',
+    'Rate Unit': '',
+    'Notes': '',
     // Crop / living root
-    planting_date: '',
-    harvest_or_termination_date: '',
-    living_root_days: '',
+    'Planting Date': '',
+    'Harvest or Termination Date': '',
+    'Living Root Days': '',
     // Soil sample / Haney
-    sample_count: '',
-    sample_year: '',
-    sample_method: '',
-    lab_name: '',
-    lab_results_reference: '',
-    sample_ids: '',
-    sample_depths: '',
-    som_percent: '',
-    organic_carbon: '',
-    available_n: '',
-    available_p: '',
-    available_k: '',
-    ph: '',
-    co2_c: '',
-    soil_health_score: '',
-    mac_percent: '',
-    organic_c_n: '',
+    'Soil Sample Count': '',
+    'Sample Year': '',
+    'Sample Method': '',
+    'Lab Name': '',
+    'Lab Results Reference': '',
+    'Sample IDs': '',
+    'Sample Depths': '',
+    'Soil Organic Matter %': '',
+    'Total Organic Carbon': '',
+    'Available Nitrogen': '',
+    'Available Phosphorus': '',
+    'Available Potassium': '',
+    'Soil pH': '',
+    'CO2-C (Microbial Activity)': '',
+    'Soil Health Score': '',
+    'MAC %': '',
+    'Organic C to N Ratio': '',
     // Crop protection
-    target_pest_or_issue: '',
-    active_ingredient: '',
-    active_ingredient_percent: '',
-    ipm_attested: '',
-    iwm_attested: '',
-    idm_attested: '',
-    // Fertility
-    npks_analysis: '',
-    units_n_per_acre: '',
-    units_p2o5_per_acre: '',
-    units_k2o_per_acre: '',
-    units_s_per_acre: '',
-    nitrogen_inhibitor: '',
-    slow_release: '',
-    vrt: '',
-    nutrient_management_plan: '',
-    four_r: '',
+    'Target Pest or Issue': '',
+    'Active Ingredient': '',
+    'Active Ingredient %': '',
+    'IPM Attested': '',
+    'IWM Attested': '',
+    'IDM Attested': '',
+    // Fertility / Nutrients
+    'N-P-K Analysis': '',
+    'Nitrogen Units per Acre': '',
+    'Phosphorus (P2O5) Units per Acre': '',
+    'Potassium (K2O) Units per Acre': '',
+    'Sulfur Units per Acre': '',
+    'Used Nitrogen Inhibitor': '',
+    'Used Slow-Release Fertilizer': '',
+    'Applied with Variable Rate Technology': '',
+    'Documented on Nutrient Management Plan': '',
+    '4R Compliant Application': '',
     // Tillage
-    tillage_implement: '',
-    tillage_passes: '',
-    tillage_depth_inches: '',
-    calculated_gtir: '',
+    'Tillage Implement': '',
+    'Tillage Passes': '',
+    'Tillage Depth (inches)': '',
+    'Calculated gTIR Score': '',
     // Irrigation
-    water_source: '',
-    pump_gpm: '',
-    min_hours_per_cycle: '',
-    max_hours_per_cycle: '',
-    average_hours_per_cycle: '',
-    min_cycles_per_year: '',
-    max_cycles_per_year: '',
-    average_cycles_per_year: '',
-    min_water_depth_inches: '',
-    max_water_depth_inches: '',
-    average_water_depth_inches: '',
-    gallons_per_hour: '',
-    gallons_per_cycle: '',
-    gallons_per_year: '',
-    acre_feet_annually: '',
-    flood_equivalent_events_per_acre: '',
-    wildlife_flooding: '',
-    awd_count: '',
+    'Water Source': '',
+    'Pump Flow Rate (GPM)': '',
+    'Min Hours per Cycle': '',
+    'Max Hours per Cycle': '',
+    'Average Hours per Cycle': '',
+    'Min Irrigation Cycles per Year': '',
+    'Max Irrigation Cycles per Year': '',
+    'Average Irrigation Cycles per Year': '',
+    'Gallons per Hour': '',
+    'Gallons per Cycle': '',
+    'Gallons per Year': '',
+    'Acre-Feet Applied Annually': '',
+    'Wildlife Flooding Attested': '',
+    'AWD Events Performed (Rice Only)': '',
     // FPA
-    fpa_type: '',
-    location: '',
-    quantity: '',
+    'Delivery Point Type': '',
+    'Delivery Location': '',
+    'Quantity Delivered': '',
     // Evidence
-    kml_uploaded: data.files?.kmlLoaded ? 'Yes' : 'No',
-    haney_csv_uploaded: data.files?.csvLoaded ? 'Yes' : 'No',
-    kml_boundary_names: (data.files?.kmlBoundaryNames||[]).join('; '),
-    qualifying_practices: (data.qualifyingPractices||[]).join('; ')
+    'KML Boundary File Uploaded': data.files?.kmlLoaded ? 'Yes' : 'No',
+    'Haney Soil CSV Uploaded': data.files?.csvLoaded ? 'Yes' : 'No',
+    'KML Boundary Names': (data.files?.kmlBoundaryNames||[]).join('; '),
+    'Qualifying Practices': (data.qualifyingPractices||[]).join('; ')
   };
 }
 
@@ -2047,205 +2238,274 @@ function flattenForCSV(data){
 
   // Farm summary row
   const farm=baseCropForceRow(data,'Farm Information','farm_summary',1);
-  farm.acres=data.farmInfo?.totalAcres||'';
-  farm.notes=`KML boundaries: ${data.files?.kmlBoundaryCount||0}; Haney samples: ${data.files?.csvSampleCount||0}`;
+  farm['Acres']=data.farmInfo?.totalAcres||'';
+  farm['Notes']=`KML boundaries: ${data.files?.kmlBoundaryCount||0}; Haney samples: ${data.files?.csvSampleCount||0}`;
   rows.push(farm);
 
-  // Crop plan rows — Crop Plan / LRI export structure
+  // Crop plan rows — one row per crop with pre/post cover crop columns
   (data.cropRotation||[]).forEach((cr,i)=>{
     const r=baseCropForceRow(data,'Crop Plan','crop_plan',i+1);
-    r.input_category=cr.inputCategory||'';
-    r.crop_page_name=cr.cropPageName||'';
-    r.crop=cr.cropType||'';
-    r.crop_year=cr.year||'';
-    r.planting_year=cr.year||'';
-    r.acres=cr.cropAcres||'';
-    r.crop_acres=cr.cropAcres||'';
-    r.field_name=cr.cropFields||'';
-    r.crop_fields=cr.cropFields||'';
-    r.variety=cr.variety||'';
-    r.seeding_rate_lb_ac=cr.seedingRate||'';
-    r.planting_date=cr.plantingDate||'';
-    r.harvest_or_termination_date=cr.harvestDate||'';
-    r.termination_style=cr.terminationStyle||'';
-    r.living_root_days=cr.livingRootDays||'';
-    r.lri=cr.lri||'';
-    r.total_crop_lri=cr.totalCropLri||'';
-    r.annual_crop_living_root_percent=cr.annualCropLivingRootPct||'';
-    r.crop_lri_interpretation=cr.cropLriInterpretation||'';
-    r.notes=cr.notes||'';
-    if(hasAny(r,['crop','crop_year','acres','field_name','planting_date','harvest_or_termination_date','notes'])) rows.push(r);
+    r['Crop Page Name']=cr.cropPageName||'';
+    r['Crop']=cr.cropType||'';
+    r['Crop Year']=cr.year||'';
+    r['Acres']=cr.cropAcres||'';
+    r['Field Name']=cr.cropFields||'';
+    r['Variety']=cr.variety||'';
+    r['Seeding Rate (lb/ac)']=cr.seedingRate||'';
+    // Cash crop window
+    r['Cash Crop Planting Date']=cr.plantingDate||'';
+    r['Cash Crop Harvest Date']=cr.harvestDate||'';
+    r['Cash Crop Termination Style']=cr.terminationStyle||'';
+    r['Cash Crop Living Root Days']=cr.livingRootDays||'';
+    r['Cash Crop LRI']=cr.lri||'';
+    // Pre-season cover crop
+    r['Pre-Season Cover Crop']=cr.preSeasonCoverCrop||'';
+    r['Pre-Season Cover Crop Variety']=cr.preSeasonVariety||'';
+    r['Pre-Season Planting Date']=cr.preSeasonPlantingDate||'';
+    r['Pre-Season Termination Date']=cr.preSeasonTerminationDate||'';
+    r['Pre-Season Termination Style']=cr.preSeasonTerminationStyle||'';
+    r['Pre-Season Living Root Days']=cr.preSeasonLivingRootDays||'';
+    r['Pre-Season LRI']=cr.preSeasonLRI||'';
+    r['Pre-Season Notes']=cr.preSeasonNotes||'';
+    // Post-harvest cover crop
+    r['Post-Harvest Cover Crop']=cr.postHarvestCoverCrop||'';
+    r['Post-Harvest Cover Crop Variety']=cr.postHarvestVariety||'';
+    r['Post-Harvest Planting Date']=cr.postHarvestPlantingDate||'';
+    r['Post-Harvest Termination Date']=cr.postHarvestTerminationDate||'';
+    r['Post-Harvest Termination Style']=cr.postHarvestTerminationStyle||'';
+    r['Post-Harvest Living Root Days']=cr.postHarvestLivingRootDays||'';
+    r['Post-Harvest LRI']=cr.postHarvestLRI||'';
+    r['Post-Harvest Notes']=cr.postHarvestNotes||'';
+    // Totals
+    r['Total Crop LRI']=cr.totalCropLri||'';
+    r['Annual Crop Living Root %']=cr.annualCropLivingRootPct||'';
+    r['LRI Interpretation']=cr.cropLriInterpretation||'';
+    r['Notes']=cr.notes||'';
+    if(cr.cropType||cr.cropPageName||cr.cropAcres) rows.push(r);
   });
 
-  // Soil sample rows
-  // Soil sample rows — one per included boundary / matched sample group
+  // Soil sample rows — one row per individual sample from uploaded CSV
+  // Falls back to boundary-group averages if no CSV uploaded
   const ss=data.soilSampling||{};
-  (ss.boundaries||[]).filter(s=>String(s.included||'').toLowerCase()!=='no').forEach((s,i)=>{
-    const r=baseCropForceRow(data,'Soil Sampling','haney_soil_sample',i+1);
-    r.field_name=s.field||'';
-    r.sample_count=s.sampleCount??'';
-    r.sample_year=s.sampleYear||'';
-    r.sample_method=s.sampleMethod||ss.method||'';
-    r.lab_name=s.lab||ss.lab||'';
-    r.lab_results_reference=s.resultsRef||ss.resultsRef||'';
-    r.sample_ids=s.sampleIds||'';
-    r.sample_depths=s.sampleDepths||'';
-    r.som_percent=s.avgSOM!=null?numVal(s.avgSOM,2):'';
-    r.organic_carbon=s.avgOrganicCarbon!=null?numVal(s.avgOrganicCarbon,2):'';
-    r.available_n=s.avgAvailableN!=null?numVal(s.avgAvailableN,2):'';
-    r.available_p=s.avgAvailableP!=null?numVal(s.avgAvailableP,2):'';
-    r.available_k=s.avgAvailableK!=null?numVal(s.avgAvailableK,2):'';
-    r.ph=s.avgPH!=null?numVal(s.avgPH,2):'';
-    r.co2_c=s.avgCO2C!=null?numVal(s.avgCO2C,2):'';
-    r.soil_health_score=s.avgSoilHealthScore!=null?numVal(s.avgSoilHealthScore,2):'';
-    r.mac_percent=s.avgMAC!=null?numVal(s.avgMAC,2):'';
-    r.organic_c_n=s.avgCN!=null?numVal(s.avgCN,2):'';
-    rows.push(r);
-  });
+  const soilMethod=ss.method||'';
+  const soilLab=ss.lab||'';
+  const soilRef=ss.resultsRef||'';
+
+  // Helper: grab a numeric value from a sample row, trying multiple key aliases
+  function sampleVal(s, ...keys) {
+    for (const k of keys) {
+      const v = parseFloat(s[k]);
+      if (isFinite(v)) return numVal(v, 2);
+    }
+    return '';
+  }
+  function sampleStr(s, ...keys) {
+    for (const k of keys) {
+      const v = String(s[k]||'').trim();
+      if (v) return v;
+    }
+    return '';
+  }
+
+  if (csvData && csvData.length) {
+    // Export every individual sample row from the uploaded CSV
+    csvData.forEach((s, i) => {
+      const r = baseCropForceRow(data,'Soil Sampling','haney_soil_sample', i+1);
+      // Field identity
+      r['Field Name']      = sampleStr(s,'Field Name','Field','Sample ID 1','Results For');
+      r['Sample IDs']      = sampleStr(s,'Sample ID','Sample ID 1','Lab No','Sample No');
+      r['Sample Year']     = sampleStr(s,'Sampling Date','Date Recd','Date Rept','Sample Date').slice(0,4)||'';
+      r['Sample Method']   = soilMethod;
+      r['Lab Name']        = sampleStr(s,'Lab Name','Company') || soilLab;
+      r['Lab Results Reference'] = soilRef;
+      r['Sample Depths']   = [sampleStr(s,'Sample Depth From'), sampleStr(s,'Sample Depth To')].filter(Boolean).join('-') || sampleStr(s,'Sample Depth');
+      r['Notes']           = sampleStr(s,'Notes','Comments');
+      // Lat/long if present
+      const lat = sampleStr(s,'Latitude','Planned Latitude');
+      const lng = sampleStr(s,'Longitude','Planned Longitude');
+      if (lat || lng) r['Notes'] = (r['Notes'] ? r['Notes']+'; ' : '') + `lat ${lat} lng ${lng}`;
+      // Soil health values — try both normalized aliases and common raw column names
+      r['Soil Organic Matter %']     = sampleVal(s,'Organic Matter','OM','SOM','Organic Matter %');
+      r['Total Organic Carbon']       = sampleVal(s,'Total Organic Carbon','TOC','Organic C','Organic Carbon');
+      r['Available Nitrogen']         = sampleVal(s,'Available Nitrogen','Available N','Avail N','Nitrate-N','NO3-N','NO3-Nitrogen','Plant Available N');
+      r['Available Phosphorus']       = sampleVal(s,'Available Phosphorus','Available P','Avail P','Phosphorus','Plant Available P');
+      r['Available Potassium']        = sampleVal(s,'Available Potassium','Available K','Avail K','Potassium','Plant Available K');
+      r['Soil pH']                    = sampleVal(s,'1:1 Soil pH','Soil pH','pH','1:1 pH');
+      r['CO2-C (Microbial Activity)'] = sampleVal(s,'CO2-C','CO2 C','CO2C','CO2-C Respiration');
+      r['Soil Health Score']          = sampleVal(s,'Soil Health Calculation','SHC','Soil Health Score','Haney Score');
+      r['MAC %']                      = sampleVal(s,'% MAC','MAC','MAC %');
+      r['Organic C to N Ratio']       = sampleVal(s,'Organic C:N Ratio','Organic C:N','Organic C/N','C:N Ratio','C:N');
+      // Additional Haney / PLFA fields if present
+      r['Total Living Microbial Biomass'] = sampleVal(s,'Total Living Microbial Biomass','Total Microbial Biomass','Microbial Biomass');
+      r['Fungi to Bacteria Ratio']        = sampleVal(s,'Fungi:Bacteria','Fungi to Bacteria','F:B Ratio');
+      rows.push(r);
+    });
+  } else if ((ss.boundaries||[]).length) {
+    // No raw CSV — fall back to boundary-group averages (when only KML was uploaded)
+    (ss.boundaries||[]).filter(s=>String(s.included||'').toLowerCase()!=='no').forEach((s,i)=>{
+      const r=baseCropForceRow(data,'Soil Sampling','haney_soil_sample',i+1);
+      r['Field Name']=s.field||'';
+      r['Soil Sample Count']=s.sampleCount??'';
+      r['Sample Year']=s.sampleYear||'';
+      r['Sample Method']=soilMethod;
+      r['Lab Name']=soilLab;
+      r['Lab Results Reference']=soilRef;
+      r['Sample IDs']=s.sampleIds||'';
+      r['Sample Depths']=s.sampleDepths||'';
+      r['Soil Organic Matter %']=s.avgSOM!=null?numVal(s.avgSOM,2):'';
+      r['Total Organic Carbon']=s.avgOrganicCarbon!=null?numVal(s.avgOrganicCarbon,2):'';
+      r['Available Nitrogen']=s.avgAvailableN!=null?numVal(s.avgAvailableN,2):'';
+      r['Available Phosphorus']=s.avgAvailableP!=null?numVal(s.avgAvailableP,2):'';
+      r['Available Potassium']=s.avgAvailableK!=null?numVal(s.avgAvailableK,2):'';
+      r['Soil pH']=s.avgPH!=null?numVal(s.avgPH,2):'';
+      r['CO2-C (Microbial Activity)']=s.avgCO2C!=null?numVal(s.avgCO2C,2):'';
+      r['Soil Health Score']=s.avgSoilHealthScore!=null?numVal(s.avgSoilHealthScore,2):'';
+      r['MAC %']=s.avgMAC!=null?numVal(s.avgMAC,2):'';
+      r['Organic C to N Ratio']=s.avgCN!=null?numVal(s.avgCN,2):'';
+      rows.push(r);
+    });
+  }
 
   // Crop protection
   (data.cropProtection?.applications||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'Crop Protection','crop_protection_application',i+1);
-    r.crop=a.crop||a.cropName||'';
-    r.field_name=a.field||a.cropFields||'';
-    r.date=a.date||'';
-    r.product_or_activity=a.name||'';
-    r.category=a.type||'';
-    r.method=a.applicationMethod||a.method||'';
-    r.rate=a.rate||'';
-    r.rate_unit=a.unit||'';
-    r.target_pest_or_issue=a.pest||'';
-    r.active_ingredient=a.aiPerAcre||'';
-    r.active_ingredient_percent=a.activePct||'';
-    r.ipm_attested=yesNo(data.cropProtection.ipm);
-    r.iwm_attested=yesNo(data.cropProtection.iwm);
-    r.idm_attested=yesNo(data.cropProtection.idm);
-    r.notes=a.notes||'';
+    r['Crop']=a.crop||a.cropName||'';
+    r['Field Name']=a.field||a.cropFields||'';
+    r['Date']=a.date||'';
+    r['Product or Activity']=a.name||'';
+    r['Category']=a.type||'';
+    r['Application Method']=a.applicationMethod||a.method||'';
+    r['Rate']=a.rate||'';
+    r['Rate Unit']=a.unit||'';
+    r['Target Pest or Issue']=a.pest||'';
+    r['Active Ingredient']=a.aiPerAcre||'';
+    r['Active Ingredient %']=a.activePct||'';
+    r['IPM Attested']=yesNo(data.cropProtection.ipm);
+    r['IWM Attested']=yesNo(data.cropProtection.iwm);
+    r['IDM Attested']=yesNo(data.cropProtection.idm);
+    r['Notes']=a.notes||'';
     rows.push(r);
   });
 
-  // Fertilizer
-  (data.fertilizer?.applications||[]).forEach((a,i)=>{
-    const units=nutrientUnitsFromPercents(a.rate,a.unit,a.nPct,a.pPct,a.kPct);
-    const r=baseCropForceRow(data,'Fertilizer','fertilizer_application',i+1);
-    r.crop=a.crop||a.cropName||'';
-    r.field_name=a.field||a.cropFields||'';
-    r.date=a.date||'';
-    r.product_or_activity=a.product||'';
-    r.method=a.applicationType||a.method||'';
-    r.rate=a.rate||'';
-    r.rate_unit=a.unit||'';
-    r.npks_analysis=[a.nPct,a.pPct,a.kPct].filter(v=>v!==undefined&&v!=='').join('-');
-    r.units_n_per_acre=numVal(units.n,1);
-    r.units_p2o5_per_acre=numVal(units.p2o5,1);
-    r.units_k2o_per_acre=numVal(units.k2o,1);
-    r.units_s_per_acre=numVal(units.s,1);
-    r.nitrogen_inhibitor=yesNo(data.fertilizer.ninh);
-    r.slow_release=yesNo(data.fertilizer.slowRelease);
-    r.vrt=yesNo(data.fertilizer.vrt);
-    r.nutrient_management_plan=yesNo(data.fertilizer.nmp);
-    r.four_r=yesNo(data.fertilizer.fourR);
-    r.notes=a.notes||'';
-    rows.push(r);
-  });
-
-  // Manure / organic fertilizer
-  (data.manure||[]).forEach((a,i)=>{
-    const r=baseCropForceRow(data,'Organic Fertilizer','organic_fertilizer_application',i+1);
-    r.crop=a.crop||'';
-    r.date=a.date||'';
-    r.product_or_activity=a.type||'';
-    r.rate=a.rate||'';
-    r.rate_unit=a.unit||'';
-    r.notes=a.notes||'';
-    rows.push(r);
-  });
-
-  // Soil amendments
-  (data.soilAmendments||[]).forEach((a,i)=>{
-    const r=baseCropForceRow(data,'Soil Amendment','soil_amendment_application',i+1);
-    r.crop=a.crop||'';
-    r.date=a.date||'';
-    r.product_or_activity=a.product||'';
-    r.rate=a.amount||'';
-    r.rate_unit=a.unit||'';
-    r.notes=a.notes||'';
-    rows.push(r);
-  });
+  // Nutrient Management (fertilizer products, micronutrients, organic amendments)
+  // Exported from NM module — mirrors Fertility Plan CSV structure
+  if (typeof nmGetExportRows === 'function') {
+    const nmBaseRow = (category, recordType, seq) => baseCropForceRow(data, category, recordType, seq);
+    const nmRows = nmGetExportRows(nmBaseRow);
+    nmRows.forEach(r => {
+      // Attach attestations
+      r['Used Nitrogen Inhibitor']= yesNo(YN['ninh']);
+      r['Used Slow-Release Fertilizer']= yesNo(YN['slowrel']);
+      r['Applied with Variable Rate Technology']= yesNo(YN['vrt']);
+      r['Documented on Nutrient Management Plan']= yesNo(YN['nmp']);
+      r['4R Compliant Application']= yesNo(YN['4r']);
+      rows.push(r);
+    });
+  }
 
   // Harvest
   (data.harvest||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'Harvest','harvest_event',i+1);
-    r.date=a.date||'';
-    r.product_or_activity=a.type||'';
-    r.rate=a.yield||'';
-    r.notes=`Residue removed: ${a.residue||''}; Residue burning: ${a.burn||''}`.replace(/; $/,'');
+    r['Date']=a.date||'';
+    r['Product or Activity']=a.type||'';
+    r['Rate']=a.yield||'';
+    r['Notes']=`Residue removed: ${a.residue||''}; Residue burning: ${a.burn||''}`.replace(/; $/,'');
     rows.push(r);
   });
 
 
   // Tillage
-  (data.tillage||[]).forEach((a,i)=>{
-    const r=baseCropForceRow(data,'Tillage','tillage_event',i+1);
-    r.crop=a.crop||a.cropName||'';
-    r.acres=a.area||a.cropAcres||'';
-    r.date=a.date||'';
-    r.product_or_activity=a.implement||'';
-    r.tillage_implement=a.implement||'';
-    r.method=a.tillageType||'';
-    r.tillage_passes=a.passes||'';
-    r.tillage_depth_inches=a.depth||'';
-    r.calculated_gtir=a.eventGTIR||'';
-    r.notes=a.notes||'';
+  if (data.noTillOnly) {
+    const r=baseCropForceRow(data,'Tillage','no_till',1);
+    r['Application Method']='No Till (0)';
+    r['Calculated gTIR Score']=0;
+    r['Notes']='No till recorded for this program year';
     rows.push(r);
-  });
+  } else {
+    (data.tillage||[]).forEach((a,i)=>{
+      const r=baseCropForceRow(data,'Tillage','tillage_event',i+1);
+      r['Crop']=a.crop||a.cropName||'';
+      r['Acres']=a.area||a.cropAcres||'';
+      r['Date']=a.date||'';
+      r['Product or Activity']=a.implement||'';
+      r['Tillage Implement']=a.implement||'';
+      r['Application Method']=a.tillageType||'';
+      r['Tillage Passes']=a.passes||'';
+      r['Tillage Depth (inches)']=a.depth||'';
+      r['Calculated gTIR Score']=a.eventGTIR||'';
+      r['Notes']=a.notes||'';
+      rows.push(r);
+    });
+  }
 
   // Irrigation
+  if (data.irrigation?.rainFedOnly) {
+    const r=baseCropForceRow(data,'Irrigation','no_irrigation_rain_fed',1);
+    r['Category']='No Irrigation — Rain Fed Only';
+    r['Notes']='Rain fed only — no irrigation applied for this program year';
+    rows.push(r);
+  } else {
   (data.irrigation?.events||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'Irrigation','irrigation_event',i+1);
-    r.crop=a.cropYear||'';
-    r.category=a.season||'';
-    r.product_or_activity=a.pumpName||'';
-    r.water_source=a.waterSource||'';
-    r.pump_gpm=a.pumpGPM||'';
-    r.min_hours_per_cycle=a.minHoursCycle||'';
-    r.max_hours_per_cycle=a.maxHoursCycle||'';
-    r.average_hours_per_cycle=a.averageHoursPerCycle||'';
-    r.min_cycles_per_year=a.minCyclesYear||'';
-    r.max_cycles_per_year=a.maxCyclesYear||'';
-    r.average_cycles_per_year=a.averageCyclesPerYear||'';
-    r.min_water_depth_inches=a.minWaterDepthIn||'';
-    r.max_water_depth_inches=a.maxWaterDepthIn||'';
-    r.average_water_depth_inches=a.averageWaterDepthIn||'';
-    r.gallons_per_hour=a.gallonsPerHour||'';
-    r.gallons_per_cycle=a.gallonsPerCycle||'';
-    r.gallons_per_year=a.gallonsPerYear||'';
-    r.acre_feet_annually=a.acreFeetAnnually||'';
-    r.flood_equivalent_events_per_acre=a.estimatedFloodEquivalentEventsPerAcre||'';
-    r.wildlife_flooding=yesNo(data.irrigation.wildlifeFlooding);
-    r.awd_count=data.irrigation.awdCount||'';
+    r['Crop']=a.cropYear||'';
+    r['Category']=a.season||'';
+    r['Product or Activity']=a.pumpName||'';
+    r['Water Source']=a.waterSource||'';
+    r['Pump Flow Rate (GPM)']=a.pumpGPM||'';
+    r['Min Hours per Cycle']=a.minHoursCycle||'';
+    r['Max Hours per Cycle']=a.maxHoursCycle||'';
+    r['Average Hours per Cycle']=a.averageHoursPerCycle||'';
+    r['Min Irrigation Cycles per Year']=a.minCyclesYear||'';
+    r['Max Irrigation Cycles per Year']=a.maxCyclesYear||'';
+    r['Average Irrigation Cycles per Year']=a.averageCyclesPerYear||'';
+    r['AWD Events Performed (Rice Only)']=a.awdEvents||'';
+    r['Gallons per Hour']=a.gallonsPerHour||'';
+    r['Gallons per Cycle']=a.gallonsPerCycle||'';
+    r['Gallons per Year']=a.gallonsPerYear||'';
+    r['Acre-Feet Applied Annually']=a.acreFeetAnnually||'';
+    r['Wildlife Flooding Attested']=yesNo(data.irrigation.wildlifeFlooding);
+    r['AWD Events Performed (Rice Only)']=data.irrigation.awdCount||'';
     rows.push(r);
   });
+  } // end irrigation block
 
   // First point of aggregation
   (data.firstPointOfAggregation||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'First Point of Aggregation','fpa_delivery',i+1);
-    r.product_or_activity=a.name||'';
-    r.fpa_type=a.type||'';
-    r.location=a.location||'';
-    r.date=a.date||'';
-    r.quantity=a.qty||'';
+    r['Product or Activity']=a.name||'';
+    r['Delivery Point Type']=a.type||'';
+    r['Delivery Location']=a.location||'';
+    r['Date']=a.date||'';
+    r['Quantity Delivered']=a.qty||'';
     rows.push(r);
   });
 
   // Keep only useful rows and remove fully empty records besides farm summary.
-  return rows.filter(r=>r.record_type==='farm_summary' || hasAny(r,[
-    'field_name','crop','crop_year','acres','date','start_date','end_date','product_or_activity',
-    'sample_count','sample_year','lab_name','rate','tillage_implement','pump_gpm','quantity'
+  return rows.filter(r=>r['Record Type']==='farm_summary' || hasAny(r,[
+    'Field Name','Crop','Crop Year','Acres','Date','Product or Activity',
+    'Soil Sample Count','Sample Year','Lab Name','Rate','Tillage Implement',
+    'Pump Flow Rate (GPM)','Quantity Delivered','Crop Page Name',
+    'Cash Crop Planting Date','Pre-Season Cover Crop','Post-Harvest Cover Crop',
+    'Total Product','Nitrogen Units per Acre','Sample IDs','Soil Organic Matter %'
   ]));
 }
 
+
+// Temporarily restores current step's content to hidden DOM so collectData works,
+// then mirrors it back so the UI looks unchanged
+function _ensureHiddenBeforeCollect() {
+  const step = WZ_STEPS[wz_current];
+  if (!step) return;
+  const needsRestore = step.id !== 'uploads' && step.id !== 'export' && step.id !== 'nutrient';
+  if (needsRestore) {
+    restoreSectionContent(step.id);
+    // Re-mirror after a tick so UI updates don't flicker (collect is sync so this is safe)
+    requestAnimationFrame(() => mirrorSectionContent(step.id));
+  }
+}
+
 function exportCSV(){
+  _ensureHiddenBeforeCollect();
   const data=collectData();
   const rows=flattenForCSV(data);
   const csv=toCSV(rows);
@@ -2253,10 +2513,241 @@ function exportCSV(){
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
+  a.style.display='none';
+  document.body.appendChild(a);
   const farmName=(data.farmInfo?.farmName||data.field?.farm||'farm').replace(/[^a-z0-9-_]+/gi,'_').replace(/^_+|_+$/g,'');
-  a.download=`arva_crop_force_upload_${farmName||'farm'}.csv`;
+  a.download='arva_crop_force_upload_'+(farmName||'farm')+'.csv';
   a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },200);
+}
+
+function getFarmSlug() {
+  const data = collectData();
+  return (data.farmInfo?.farmName || 'farm').replace(/[^a-z0-9-_]+/gi,'_').replace(/^_+|_+$/g,'') || 'farm';
+}
+
+function exportZip() {
+  const progressEl = document.getElementById('zip-progress');
+  const setProgress = (msg, isError) => {
+    if (!progressEl) return;
+    progressEl.style.display = 'block';
+    progressEl.style.color = isError ? '#FCA5A5' : 'rgba(255,255,255,.85)';
+    progressEl.textContent = msg;
+  };
+
+  setProgress('⏳ Building package…');
+
+  // Load JSZip if needed, then build
+  function doZip() {
+    try {
+      const zip = new JSZip();
+      const farm = getFarmSlug();
+      const folderName = 'arva_submission_' + farm;
+      const folder = zip.folder(folderName);
+
+      // 1. ARVA Crop Force CSV
+      _ensureHiddenBeforeCollect();
+      const data = collectData();
+      const rows = flattenForCSV(data);
+      const csv = toCSV(rows);
+      folder.file('arva_crop_force_' + farm + '.csv', csv);
+      setProgress('⏳ Added CSV data…');
+
+      // 2. Original KML file
+      if (window._rawKmlText) {
+        const kmlName = (window._rawKmlName || 'field_boundaries.kml').replace(/[^a-z0-9._-]/gi, '_');
+        folder.file(kmlName, window._rawKmlText);
+      }
+
+      // 3. Original Haney/soil CSV
+      if (window._rawCsvText) {
+        const csvName = (window._rawCsvName || 'haney_soil_results.csv').replace(/[^a-z0-9._-]/gi, '_');
+        folder.file(csvName, window._rawCsvText);
+      }
+
+      // 4. Submission summary JSON
+      const summary = buildSubmissionSummary(data);
+      folder.file('submission_summary_' + farm + '.json', JSON.stringify(summary, null, 2));
+
+      // 5. README
+      folder.file('README.txt', buildReadme(farm, data));
+
+      setProgress('⏳ Generating ZIP file…');
+
+      // Generate — use callback form for maximum browser compatibility
+      zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } })
+        .then(function(blob) {
+          // Robust download: append to body, click, remove
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = folderName + '.zip';
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(function() {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }, 250);
+          setProgress('✓ ZIP downloaded!');
+          setTimeout(function() {
+            if (progressEl) progressEl.style.display = 'none';
+          }, 4000);
+        })
+        .catch(function(err) {
+          setProgress('✗ ZIP generation failed: ' + err.message, true);
+          console.error('ZIP error:', err);
+        });
+
+    } catch(err) {
+      setProgress('✗ Error: ' + err.message, true);
+      console.error('exportZip error:', err);
+    }
+  }
+
+  if (typeof JSZip !== 'undefined') {
+    doZip();
+  } else {
+    setProgress('⏳ Loading ZIP library…');
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    s.onload = function() { doZip(); };
+    s.onerror = function() {
+      setProgress('✗ Could not load ZIP library. Check internet connection.', true);
+    };
+    document.head.appendChild(s);
+  }
+}
+
+function exportJSON() {
+  const data = collectData();
+  const summary = buildSubmissionSummary(data);
+  const json = JSON.stringify(summary, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  const farm = getFarmSlug();
+  a.download = 'arva_submission_' + farm + '.json';
+  a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+}
+
+function buildSubmissionSummary(data) {
+  const farm = data.farmInfo || {};
+  const now = new Date().toISOString();
+
+  // Gather NM module summary
+  const nmSummary = { crops: [], totals: { N: 0, P: 0, K: 0 } };
+  if (typeof NM !== 'undefined') {
+    NM.crops.forEach(c => {
+      const ac = parseFloat(c.acres) || 0;
+      let cropN = 0, cropP = 0, cropK = 0;
+      (c.products || []).forEach(p => {
+        const lb = (p.unit === 'Tons' ? (parseFloat(p.rate)||0)*2000 : parseFloat(p.rate)||0);
+        cropN += lb * ((parseFloat(p.nPct)||0)/100);
+        cropP += lb * ((parseFloat(p.pPct)||0)/100);
+        cropK += lb * ((parseFloat(p.kPct)||0)/100);
+      });
+      nmSummary.totals.N += cropN * ac;
+      nmSummary.totals.P += cropP * ac;
+      nmSummary.totals.K += cropK * ac;
+      nmSummary.crops.push({
+        name: c.name || '', acres: c.acres || '', fields: c.fields || '',
+        nPerAcre: cropN.toFixed(2), pPerAcre: cropP.toFixed(2), kPerAcre: cropK.toFixed(2),
+        fertilizerProducts: (c.products||[]).filter(p=>p.name||p.rate).length,
+        micronutrients: (c.micros||[]).filter(m=>m.name||m.rate).length,
+        organicInputs: (c.amendments||[]).filter(a=>a.name||a.rate).length,
+      });
+    });
+    nmSummary.totals.N = nmSummary.totals.N.toFixed(2);
+    nmSummary.totals.P = nmSummary.totals.P.toFixed(2);
+    nmSummary.totals.K = nmSummary.totals.K.toFixed(2);
+  }
+
+  return {
+    meta: {
+      program: 'Soil and Climate Initiative',
+      generatedAt: now,
+      tool: 'ARVA Data Tool — Wizard',
+    },
+    farm: {
+      name: farm.farmName || '',
+      totalAcres: farm.totalAcres || '',
+      totalFields: farm.totalFields || '',
+      cropCount: farm.cropCount || '',
+      planningYear: farm.planningYear || '',
+      preparedBy: farm.preparedBy || '',
+    },
+    files: {
+      kmlUploaded: !!window._rawKmlText,
+      kmlFileName: window._rawKmlName || null,
+      kmlBoundaryCount: data.files?.kmlBoundaryCount || 0,
+      soilCsvUploaded: !!window._rawCsvText,
+      soilCsvFileName: window._rawCsvName || null,
+      soilSampleCount: data.files?.csvSampleCount || 0,
+    },
+    nutrientManagement: nmSummary,
+    attestations: {
+      nitrogenInhibitor: YN['ninh'] || '',
+      slowRelease: YN['slowrel'] || '',
+      vrt: YN['vrt'] || '',
+      nutrientManagementPlan: YN['nmp'] || '',
+      fourR: YN['4r'] || '',
+      ipm: YN['ipm'] || '',
+      iwm: YN['iwm'] || '',
+      idm: YN['idm'] || '',
+      wildlifeFlooding: YN['wildlife'] || '',
+    },
+    soilSampling: {
+      method: document.getElementById('soil-method')?.value || '',
+      lab: document.getElementById('soil-lab')?.value || '',
+      reference: document.getElementById('soil-pdf')?.value || '',
+    },
+    sections: {
+      boundary: data.files?.kmlBoundaryCount > 0 ? 'complete' : 'not started',
+      nutrientManagement: nmSummary.crops.some(c => c.fertilizerProducts > 0) ? 'complete' : 'not started',
+      soilSampling: document.getElementById('soil-lab')?.value ? 'complete' : 'not started',
+    },
+  };
+}
+
+function buildReadme(farm, data) {
+  const now = new Date().toLocaleString();
+  const kmlFile = window._rawKmlName ? `- ${window._rawKmlName} — original field boundary KML file` : '';
+  const soilFile = window._rawCsvText ? `- ${window._rawCsvName || 'soil_results.csv'} — original Haney/PLFA soil sample results` : '';
+  return `ARVA Program Data Submission Package
+======================================
+Farm: ${data.farmInfo?.farmName || '(not entered)'}
+Planning Year: ${data.farmInfo?.planningYear || 'Not specified'}
+Prepared By: ${data.farmInfo?.preparedBy || '(not entered)'}
+Generated: ${now}
+
+FILES IN THIS PACKAGE
+---------------------
+- arva_crop_force_${farm}.csv — main data file for upload to ARVA Crop Force
+${kmlFile}
+${soilFile}
+- submission_summary_${farm}.json — structured summary of all entered data
+- README.txt — this file
+
+UPLOAD INSTRUCTIONS
+-------------------
+1. Log in to the ARVA Crop Force platform
+2. Navigate to your farm submission
+3. Upload arva_crop_force_${farm}.csv as the primary data file
+4. Upload the KML file separately when prompted for field boundaries
+5. Keep this ZIP as your local record of the submission
+
+NOTES
+-----
+Total Acres: ${data.farmInfo?.totalAcres || '—'}
+Total Fields: ${data.farmInfo?.totalFields || '—'}
+KML Boundaries Loaded: ${data.files?.kmlBoundaryCount || 0}
+Soil Samples Loaded: ${data.files?.csvSampleCount || 0}
+`;
 }
 
 function clearAll(){
@@ -2319,7 +2810,6 @@ function bindMainUploads(){
 // ── INIT ───────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded',()=>{
   bindMainUploads();
-  // Wire up file inputs AFTER DOM is ready
   const csvInput=document.getElementById('csvInput'); if(csvInput) csvInput.addEventListener('change',e=>{if(e.target.files[0])handleCSV(e.target.files[0]);});
   const kmlInput=document.getElementById('kmlInput'); if(kmlInput) kmlInput.addEventListener('change',e=>{if(e.target.files[0])handleKML(e.target.files[0]);});
 
@@ -2332,9 +2822,1210 @@ window.addEventListener('DOMContentLoaded',()=>{
     }
   });
   
-  toggle('farm');
+  wizardInit();
   updateAll();
 });
+
+
+// ── WIZARD CONTROLLER ─────────────────────────────────────────
+const WZ_STEPS = [
+  { id:'intro',    label:'Program Overview', icon:'📋', title:'ARVA Program Overview', sub:'What you need to submit and how this tool works' },
+  { id:'farm',     label:'Farm Info',      icon:'🏡', title:'Farm information',        sub:'Basic farm details used across the entire ARVA submission' },
+  { id:'uploads',  label:'Upload Files',   icon:'📂', title:'Upload data files',       sub:'Upload your Haney lab results CSV and field boundary KML file' },
+  { id:'boundary', label:'Field Boundaries',icon:'🗺️',title:'Field boundaries',  sub:'KML polygon boundaries are extracted automatically from your upload' },
+  { id:'soil',     label:'Soil Sampling',  icon:'🔬', title:'Soil sampling',           sub:'Review matched soil samples and enter sampling method details', required:true },
+  { id:'general',  label:'Crop Plan',      icon:'🌾', title:'Crop plan',               sub:'Cash crop windows, cover crops, and Living Root Index' },
+  { id:'cp',       label:'Crop Protection',icon:'🛡️', title:'Crop protection (IPM)', sub:'Pesticide and herbicide applications aligned to your IPM plan' },
+  { id:'nutrient', label:'Nutrient Mgmt',  icon:'🌱', title:'Nutrient management',     sub:'Fertilizer products, micronutrient packs, and organic inputs — all in one place' },
+  { id:'harvest',  label:'Harvest',        icon:'🌽', title:'Harvest',                 sub:'Crop yield and harvest event records for the selected program year' },
+  { id:'tillage',  label:'Tillage',        icon:'🚜', title:'Tillage',                 sub:'Tillage intensity — implement, depth, passes, and disturbance fraction' },
+  { id:'irr',      label:'Irrigation',     icon:'💦', title:'Irrigation',              sub:'Pump setup, source, cycles, depth, and calculated water volume' },
+  { id:'fpa',      label:'Aggregation',    icon:'🏢', title:'First point of aggregation', sub:'Grain elevator, processing plant, or on-farm storage' },
+  { id:'export',   label:'Export',         icon:'⬇️', title:'Review & export',       sub:'Check completeness and download your ARVA Crop Force CSV' },
+];
+
+let wz_current = 0;
+
+
+// ── Rain Fed bypass ───────────────────────────────────────────────────────
+function toggleNoTill() {
+  const isNoTill = YN['notill'] === 'yes';
+  const logSection = document.getElementById('tillage-log-section');
+  if (logSection) {
+    logSection.style.display = isNoTill ? 'none' : '';
+    logSection.style.opacity = isNoTill ? '0' : '1';
+  }
+  const yesBtn = document.getElementById('yn-notill-yes');
+  const noBtn  = document.getElementById('yn-notill-no');
+  if (yesBtn) { yesBtn.className = 'yn-btn' + (isNoTill ? ' yes' : ''); }
+  if (noBtn)  { noBtn.className  = 'yn-btn' + (!isNoTill && YN['notill'] ? ' yes' : ''); }
+  updateAll();
+}
+
+function toggleRainFed() {
+  const isRainFed = YN['rainfed'] === 'yes';
+  const logSection = document.getElementById('irr-log-section');
+  if (logSection) {
+    logSection.style.display = isRainFed ? 'none' : '';
+    logSection.style.opacity = isRainFed ? '0' : '1';
+  }
+  const yesBtn = document.getElementById('yn-rainfed-yes');
+  const noBtn  = document.getElementById('yn-rainfed-no');
+  if (yesBtn) { yesBtn.className = 'yn-btn' + (isRainFed ? ' yes' : ''); }
+  if (noBtn)  { noBtn.className  = 'yn-btn' + (!isRainFed && YN['rainfed'] ? ' yes' : ''); }
+  updateAll();
+}
+
+// ── Irrigation CSV: also export rain-fed flag ─────────────────────────────
+// (patched into flattenForCSV via the collectData rainfed flag)
+
+function wizardInit() {
+  // Patch updateAll to also refresh wizard UI
+  if (typeof updateAll === 'function') {
+    const _origUAI = updateAll;
+    window.updateAll = function() { _origUAI(); wizardUpdateAll(); };
+  }
+  buildWizardUI();
+  showStep(0);
+  updateAll();
+}
+
+function buildWizardUI() {
+  const strip = document.getElementById('wz-step-strip');
+  const body  = document.getElementById('wz-body');
+  strip.innerHTML = '';
+  body.innerHTML  = '';
+
+  WZ_STEPS.forEach((step, i) => {
+    // Tab pill
+    const pill = document.createElement('div');
+    pill.className = 'wz-step-pill';
+    pill.id = `wz-pill-${i}`;
+    pill.innerHTML = `<span class="wz-step-num">${i+1}</span><span class="wz-step-ico">${step.icon}</span>${step.label}`;
+    pill.onclick = () => showStep(i);
+    strip.appendChild(pill);
+
+    // Step view
+    const view = document.createElement('div');
+    view.className = 'wz-step-view';
+    view.id = `wz-view-${i}`;
+    view.innerHTML = buildStepHTML(step, i);
+    body.appendChild(view);
+  });
+}
+
+function buildStepHTML(step, i) {
+  const reqBadge = step.required ? ' <span style="color:var(--red);font-size:11px;">Required</span>' : '';
+  const header = `
+    <div class="wz-step-content">
+      <div class="wz-step-hdr">
+        <div class="wz-step-hdr-top">
+          <div class="wz-step-hdr-ico">${step.icon}</div>
+          <span class="wz-step-num-badge">Step ${i+1} of ${WZ_STEPS.length}</span>
+          ${step.required ? '<span style="font-size:11px;font-weight:700;color:var(--red);background:var(--red-lt);padding:3px 10px;border-radius:20px;border:1px solid rgba(216,90,48,.22);">Required</span>' : ''}
+        </div>
+        <h2>${step.title}</h2>
+        <p>${step.sub}</p>
+      </div>
+      ${buildStepBody(step, i)}
+    </div>
+  `;
+  return header;
+}
+
+function buildStepBody(step, i) {
+  if (step.id === 'nutrient') {
+    return `
+      <div id="wz-nutrient-root"></div>
+    `;
+  }
+
+  if (step.id === 'intro') {
+    return `
+      <style>
+        .intro-hero{background:var(--green-dk);border-radius:16px;padding:2rem 2rem 1.5rem;color:#fff;margin-bottom:1.25rem;}
+        .intro-hero h2{font-size:22px;font-weight:800;margin:0 0 .5rem;letter-spacing:-.02em;}
+        .intro-hero p{font-size:14px;color:rgba(255,255,255,.8);margin:0;line-height:1.6;}
+        .intro-alert{background:#FEF3C7;border:1.5px solid #D97706;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:12px;align-items:flex-start;}
+        .intro-alert-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
+        .intro-alert-body h3{font-size:14px;font-weight:700;color:#92400E;margin:0 0 4px;}
+        .intro-alert-body p{font-size:13px;color:#78350F;margin:0;line-height:1.55;}
+        .intro-year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:1rem 0;}
+        .intro-year-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:1rem;text-align:center;}
+        .intro-year-card.current{border-color:var(--green);background:var(--green-lt);}
+        .intro-year-card .yr-num{font-size:22px;font-weight:800;color:var(--green-dk);letter-spacing:-.03em;}
+        .intro-year-card .yr-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);margin-top:3px;}
+        .intro-year-card.current .yr-label{color:var(--green-dk);}
+        .intro-year-card .yr-note{font-size:11px;color:var(--gray);margin-top:6px;line-height:1.4;}
+        .intro-year-card.current .yr-note{color:var(--green-dk);}
+        .intro-section{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:.75rem;}
+        .intro-section h3{font-size:13.5px;font-weight:700;color:var(--eerie);margin:0 0 .5rem;display:flex;align-items:center;gap:7px;}
+        .intro-section ul{margin:0;padding-left:1.3rem;}
+        .intro-section li{font-size:13px;color:var(--gray);line-height:1.7;}
+        .intro-section li strong{color:var(--eerie);}
+        .intro-req-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:.5rem;}
+        @media(max-width:600px){.intro-year-grid{grid-template-columns:1fr;}.intro-req-grid{grid-template-columns:1fr;}}
+        .intro-req-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:.7rem .9rem;}
+        .intro-req-card .rq-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray);margin-bottom:.3rem;}
+        .intro-req-card .rq-item{font-size:12px;color:var(--gray);line-height:1.6;}
+        .intro-req-card .rq-item::before{content:"✓ ";color:var(--green-dk);font-weight:700;}
+        .intro-practices{display:flex;flex-wrap:wrap;gap:6px;margin-top:.5rem;}
+        .intro-practice-tag{font-size:11.5px;background:var(--green-lt);color:var(--green-dk);border:1px solid rgba(15,110,86,.22);padding:3px 10px;border-radius:20px;font-weight:600;}
+      </style>
+
+      <div class="intro-hero">
+        <h2>Soil and Climate Initiative</h2>
+        <p>Primary Data Submission Tool — use this form to document farm practices for the ARVA program year you are preparing. Follow the steps in order and export your completed CSV at the end.</p>
+      </div>
+
+      <div class="intro-alert">
+        <div class="intro-alert-icon">📅</div>
+        <div class="intro-alert-body">
+          <h3>Complete one export for each required reporting year</h3>
+          <p>ARVA requires data for the selected program year and the required prior reporting years. Use the Planning Year field in Farm Information, complete this tool once for each required year, and export a separate file for each year.</p>
+        </div>
+      </div>
+
+      <div class="intro-year-grid">
+        <div class="intro-year-card">
+          <div class="yr-num">Year -2</div>
+          <div class="yr-label">Prior reporting year</div>
+          <div class="yr-note">Crop rotation and general practice data, as required by the program</div>
+        </div>
+        <div class="intro-year-card">
+          <div class="yr-num">Year -1</div>
+          <div class="yr-label">Prior reporting year</div>
+          <div class="yr-note">Crop rotation and general practice data, as required by the program</div>
+        </div>
+        <div class="intro-year-card current">
+          <div class="yr-num">Program Year</div>
+          <div class="yr-label">Selected planning year</div>
+          <div class="yr-note">Full practice data, soil sampling, and evidence for the selected year</div>
+        </div>
+      </div>
+
+      <div class="intro-section">
+        <h3>📋 Minimum requirements to qualify</h3>
+        <ul>
+          <li>At least <strong>3 qualifying practices</strong> must be met per field</li>
+          <li>Each field must have <strong>3 pieces of evidence</strong> — including one soil sample plus two additional pieces</li>
+          <li>Soil sample must fall within the accepted ARVA sampling window and include Soil Organic Matter (SOM)</li>
+          <li>Field boundaries must be provided as <strong>.shp or KML polygon</strong> files</li>
+        </ul>
+      </div>
+
+      <div class="intro-section">
+        <h3>🌾 Qualifying practices</h3>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:.5rem;">At least 3 of the following must be documented:</p>
+        <div class="intro-practices">
+          <span class="intro-practice-tag">Cover Cropping</span>
+          <span class="intro-practice-tag">No-Till</span>
+          <span class="intro-practice-tag">Minimum / Reduced Tillage</span>
+          <span class="intro-practice-tag">Split Applied Nitrogen</span>
+          <span class="intro-practice-tag">Nitrogen Inhibitors</span>
+          <span class="intro-practice-tag">Variable Rate Technology</span>
+          <span class="intro-practice-tag">Manure Application</span>
+          <span class="intro-practice-tag">Nutrient Management Plan</span>
+          <span class="intro-practice-tag">IDM / IWM / IPM</span>
+        </div>
+      </div>
+
+      <div class="intro-section">
+        <h3>📂 What this tool collects for the selected program year</h3>
+        <div class="intro-req-grid">
+          <div class="intro-req-card">
+            <div class="rq-label">General crop data (all 3 years)</div>
+            <div class="rq-item">Crop type and rotation</div>
+            <div class="rq-item">Planting dates</div>
+            <div class="rq-item">Living Root Index (LRI)</div>
+          </div>
+          <div class="intro-req-card">
+            <div class="rq-label">Field boundaries</div>
+            <div class="rq-item">KML or .shp polygon file</div>
+            <div class="rq-item">Grower, farm, field names</div>
+          </div>
+          <div class="intro-req-card">
+            <div class="rq-label">Soil sampling</div>
+            <div class="rq-item">Haney / PLFA lab results CSV</div>
+            <div class="rq-item">SOM % and soil health score</div>
+            <div class="rq-item">Sample method and lab name</div>
+          </div>
+          <div class="intro-req-card">
+            <div class="rq-label">Practice data (selected year)</div>
+            <div class="rq-item">Crop protection (IPM/IWM/IDM)</div>
+            <div class="rq-item">Fertilizer and nutrient inputs</div>
+            <div class="rq-item">Tillage events and depth</div>
+            <div class="rq-item">Irrigation method and volume</div>
+            <div class="rq-item">Harvest yield and residue</div>
+            <div class="rq-item">First point of aggregation</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-section">
+        <h3>ℹ️ Key definitions</h3>
+        <ul>
+          <li><strong>4R Nutrient Management:</strong> Right source, right time, right rate, right place — maximizes nutrient efficiency and minimizes environmental impact.</li>
+          <li><strong>AWD (Alternate Wetting and Drying):</strong> Rice-only irrigation practice alternating flooded and dried conditions to reduce methane emissions and water use.</li>
+          <li><strong>No-Till:</strong> Completely eliminating full-width soil disturbance year-round, retaining all crop residue on the surface.</li>
+          <li><strong>Cover Cropping:</strong> Planting grasses, legumes, or other plants during off-season periods to prevent erosion and boost soil organic carbon.</li>
+          <li><strong>IPM / IWM / IDM:</strong> Science-based management systems combining biological, cultural, physical, and chemical controls to minimize pest, weed, and disease damage.</li>
+          <li><strong>VRT (Variable Rate Technology):</strong> Customized application rates based on field conditions to improve efficiency and reduce nutrient loss.</li>
+        </ul>
+      </div>
+
+      <p style="font-size:12px;color:var(--gray);text-align:center;margin-top:1rem;">Click <strong>Continue</strong> to begin entering your farm data. All data is processed locally — nothing leaves your browser until you download the export.</p>
+    `;
+  }
+
+  if (step.id === 'intro') {
+    return `
+      <style>
+        .intro-hero{background:var(--green-dk);border-radius:16px;padding:2rem 2rem 1.5rem;color:#fff;margin-bottom:1.25rem;}
+        .intro-hero-title{font-size:22px;font-weight:800;margin:0 0 .5rem;letter-spacing:-.02em;color:#fff;}
+        .intro-hero p{font-size:14px;color:rgba(255,255,255,.8);margin:0;line-height:1.6;}
+        .intro-alert{background:#FEF3C7;border:1.5px solid #D97706;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:12px;align-items:flex-start;}
+        .intro-alert-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
+        .intro-alert-body h3{font-size:14px;font-weight:700;color:#92400E;margin:0 0 4px;}
+        .intro-alert-body p{font-size:13px;color:#78350F;margin:0;line-height:1.55;}
+        .intro-year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:1rem 0;}
+        .intro-year-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:1rem;text-align:center;}
+        .intro-year-card.current{border-color:var(--green);background:var(--green-lt);}
+        .intro-year-card .yr-num{font-size:22px;font-weight:800;color:var(--green-dk);letter-spacing:-.03em;}
+        .intro-year-card .yr-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);margin-top:3px;}
+        .intro-year-card.current .yr-label{color:var(--green-dk);}
+        .intro-year-card .yr-note{font-size:11px;color:var(--gray);margin-top:6px;line-height:1.4;}
+        .intro-year-card.current .yr-note{color:var(--green-dk);}
+        .intro-section{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:.75rem;}
+        .intro-section h3{font-size:13.5px;font-weight:700;color:var(--eerie);margin:0 0 .5rem;display:flex;align-items:center;gap:7px;}
+        .intro-section ul{margin:0;padding-left:1.3rem;}
+        .intro-section li{font-size:13px;color:var(--gray);line-height:1.7;}
+        .intro-section li strong{color:var(--eerie);}
+        .intro-req-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:.5rem;}
+        @media(max-width:600px){.intro-year-grid{grid-template-columns:1fr;}.intro-req-grid{grid-template-columns:1fr;}}
+        .intro-req-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:.7rem .9rem;}
+        .intro-req-card .rq-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray);margin-bottom:.3rem;}
+        .rq-item{font-size:12px;color:var(--gray);line-height:1.7;padding-left:1em;text-indent:-1em;}
+        .rq-item::before{content:"✓ ";color:var(--green-dk);font-weight:700;}
+        .intro-practices{display:flex;flex-wrap:wrap;gap:6px;margin-top:.5rem;}
+        .intro-practice-tag{font-size:11.5px;background:var(--green-lt);color:var(--green-dk);border:1px solid rgba(15,110,86,.22);padding:3px 10px;border-radius:20px;font-weight:600;}
+      </style>
+
+      <div class="intro-hero">
+        <div class="intro-hero-title">Soil and Climate Initiative</div>
+        <p>Primary Data Submission Tool &mdash; use this form to document farm practices for the ARVA program year you are preparing. Follow the steps in order and export your completed CSV and ZIP package at the end.</p>
+      </div>
+
+      <div class="intro-alert">
+        <div class="intro-alert-icon">📅</div>
+        <div class="intro-alert-body">
+          <h3>Complete one export for each required reporting year</h3>
+          <p>ARVA requires data for the selected program year and the required prior reporting years. Use the Planning Year field in Farm Information, complete this tool once for each required year, and export a separate file each time.</p>
+        </div>
+      </div>
+
+      <div class="intro-year-grid">
+        <div class="intro-year-card">
+          <div class="yr-num">Year -2</div>
+          <div class="yr-label">Prior reporting year</div>
+          <div class="yr-note">Crop rotation and general practice data, as required by the program</div>
+        </div>
+        <div class="intro-year-card">
+          <div class="yr-num">Year -1</div>
+          <div class="yr-label">Prior reporting year</div>
+          <div class="yr-note">Crop rotation and general practice data, as required by the program</div>
+        </div>
+        <div class="intro-year-card current">
+          <div class="yr-num">Program Year</div>
+          <div class="yr-label">Selected planning year</div>
+          <div class="yr-note">Full practice data, soil sampling, and evidence for the selected year</div>
+        </div>
+      </div>
+
+      <div class="intro-section">
+        <h3>📋 Minimum requirements to qualify</h3>
+        <ul>
+          <li>At least <strong>3 qualifying practices</strong> must be documented per field</li>
+          <li>Each field needs <strong>3 pieces of evidence</strong> &mdash; one soil sample plus two additional pieces</li>
+          <li>Soil sample must fall within the accepted ARVA sampling window and include Soil Organic Matter (SOM)</li>
+          <li>Field boundaries must be submitted as a <strong>KML or .shp polygon</strong> file with grower, farm, and field names</li>
+        </ul>
+      </div>
+
+      <div class="intro-section">
+        <h3>🌾 Qualifying practices <span style="font-size:11px;font-weight:400;color:var(--gray);">(3 minimum)</span></h3>
+        <div class="intro-practices">
+          <span class="intro-practice-tag">Cover Cropping</span>
+          <span class="intro-practice-tag">No-Till</span>
+          <span class="intro-practice-tag">Reduced Tillage</span>
+          <span class="intro-practice-tag">Split Applied Nitrogen</span>
+          <span class="intro-practice-tag">Nitrogen Inhibitors</span>
+          <span class="intro-practice-tag">Variable Rate Technology</span>
+          <span class="intro-practice-tag">Manure Application</span>
+          <span class="intro-practice-tag">Nutrient Management Plan</span>
+          <span class="intro-practice-tag">IDM / IWM / IPM</span>
+        </div>
+      </div>
+
+      <div class="intro-section">
+        <h3>📂 Data collected by this tool</h3>
+        <div class="intro-req-grid">
+          <div class="intro-req-card">
+            <div class="rq-label">General crop data (all 3 years)</div>
+            <div class="rq-item">Crop type and rotation</div>
+            <div class="rq-item">Planting &amp; harvest dates</div>
+            <div class="rq-item">Living Root Index (LRI)</div>
+            <div class="rq-item">Pre &amp; post-season cover crops</div>
+          </div>
+          <div class="intro-req-card">
+            <div class="rq-label">Field boundaries</div>
+            <div class="rq-item">KML upload (auto-processed)</div>
+            <div class="rq-item">Field names and polygon data</div>
+            <div class="rq-item">Haney CSV field matching</div>
+          </div>
+          <div class="intro-req-card">
+            <div class="rq-label">Soil sampling</div>
+            <div class="rq-item">Haney / PLFA lab results CSV</div>
+            <div class="rq-item">SOM %, CO2-C, soil health score</div>
+            <div class="rq-item">Sample method, lab name &amp; reference</div>
+          </div>
+          <div class="intro-req-card">
+            <div class="rq-label">Practice data (selected year)</div>
+            <div class="rq-item">Crop protection &mdash; IPM/IWM/IDM</div>
+            <div class="rq-item">Fertilizer, manure &amp; nutrient inputs</div>
+            <div class="rq-item">Tillage events, depth &amp; implement</div>
+            <div class="rq-item">Irrigation method, source &amp; volume</div>
+            <div class="rq-item">Harvest yield, residue &amp; type</div>
+            <div class="rq-item">First point of aggregation</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-section">
+        <h3>ℹ️ Key definitions from the ARVA program document</h3>
+        <ul>
+          <li><strong>4R Nutrient Management:</strong> Right source, right time, right rate, right place &mdash; maximizes nutrient efficiency and minimizes runoff and GHG emissions.</li>
+          <li><strong>No-Till:</strong> Completely eliminating full-width soil disturbance year-round, retaining all crop residue on the surface. Enhances carbon sequestration and reduces erosion.</li>
+          <li><strong>Cover Cropping:</strong> Planting grasses, legumes, or other plants during off-season periods to prevent soil erosion, suppress weeds, and boost soil organic carbon.</li>
+          <li><strong>AWD (Alternate Wetting and Drying):</strong> Rice-only practice alternating flooded and dried conditions to reduce methane emissions and water use.</li>
+          <li><strong>IPM / IWM / IDM:</strong> Integrated management systems combining biological, cultural, physical, and chemical controls to minimize pest, weed, and disease damage with reduced chemical reliance.</li>
+          <li><strong>VRT (Variable Rate Technology):</strong> Customized application rates based on field conditions to improve efficiency and reduce nutrient loss and runoff.</li>
+          <li><strong>Nutrient Management Plan (NMP):</strong> Optimizes fertilizer use by considering type, method, timing, and amount to enhance soil health and reduce GHG emissions.</li>
+        </ul>
+      </div>
+
+      <p style="font-size:12px;color:var(--gray);text-align:center;margin-top:1rem;">Click <strong>Continue</strong> to begin. All data stays in your browser &mdash; nothing is uploaded to any server until you download the export.</p>
+    `;
+  }
+
+  if (step.id === 'uploads') {
+    return `
+      <div class="wz-upload-pair">
+        <div class="wz-ucard">
+          <div class="wz-ucard-hdr"><span>📊</span><div><h3>Lab results CSV</h3><span>Haney / PLFA format</span></div></div>
+          <div class="wz-ucard-body">
+            <div class="uzone" id="csvZone2">
+              <div class="uzone-icon">📄</div>
+              <span class="uzone-lbl">Lab results CSV</span>
+              <div class="uzone-hint">Standard lab export (.csv)</div>
+              <button class="uzone-btn" onclick="event.stopPropagation();document.getElementById('csvInput').click()" type="button">Choose file</button>
+              <div class="uzone-status" id="csvStatus2"></div>
+            </div>
+            <div id="csv-preview-wrap2"></div>
+          </div>
+        </div>
+        <div class="wz-ucard">
+          <div class="wz-ucard-hdr"><span>🗺️</span><div><h3>Field boundaries KML</h3><span>Google Earth / GIS export</span></div></div>
+          <div class="wz-ucard-body">
+            <div class="uzone" id="kmlZone2">
+              <div class="uzone-icon">🗺️</div>
+              <span class="uzone-lbl">Field boundaries KML</span>
+              <div class="uzone-hint">Google Earth / GIS export (.kml)</div>
+              <button class="uzone-btn" onclick="event.stopPropagation();document.getElementById('kmlInput').click()" type="button">Choose file</button>
+              <div class="uzone-status" id="kmlStatus2"></div>
+            </div>
+            <div id="kml-preview-wrap2"></div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--gray);text-align:center;">Files are processed locally in your browser — nothing is uploaded to any server.</p>
+    `;
+  }
+
+  if (step.id === 'export') {
+    return `
+      <style>
+        .exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.25rem;}
+        @media(max-width:600px){.exp-grid{grid-template-columns:1fr;}}
+        .exp-card{border-radius:14px;padding:1.5rem;display:flex;flex-direction:column;gap:.75rem;}
+        .exp-card-primary{background:var(--green-dk);color:#fff;}
+        .exp-card-secondary{background:#fff;border:1.5px solid var(--border);}
+        .exp-card h3{font-size:17px;font-weight:700;margin:0;letter-spacing:-.02em;}
+        .exp-card p{font-size:13px;margin:0;opacity:.8;line-height:1.5;}
+        .exp-card-primary p{color:rgba(255,255,255,.75);}
+        .exp-card-secondary p{color:var(--gray);}
+        .exp-card-secondary h3{color:var(--eerie);}
+        .exp-badge-list{display:flex;flex-direction:column;gap:5px;margin-top:4px;}
+        .exp-badge{font-size:11.5px;display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.85);}
+        .exp-badge-sec{font-size:11.5px;display:flex;align-items:center;gap:6px;color:var(--gray);}
+        .exp-badge span,.exp-badge-sec span{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+        .exp-badge-sec span{background:var(--green-lt);color:var(--green-dk);}
+        .btn-exp-primary{padding:12px 22px;background:#fff;color:var(--green-dk);border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;display:flex;align-items:center;gap:8px;width:100%;justify-content:center;}
+        .btn-exp-primary:hover{background:var(--green-lt);}
+        .btn-exp-secondary{padding:11px 22px;background:var(--surface);color:var(--eerie);border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;display:flex;align-items:center;gap:8px;width:100%;justify-content:center;}
+        .btn-exp-secondary:hover{border-color:var(--green-mid);color:var(--green-dk);background:var(--green-lt);}
+        .exp-zip-progress{display:none;margin-top:8px;font-size:12px;color:rgba(255,255,255,.75);text-align:center;}
+        .exp-divider{border:none;border-top:1px solid var(--border);margin:.5rem 0;}
+        .exp-utils{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:.5rem;}
+        .exp-util-btn{padding:7px 16px;background:transparent;color:var(--gray);border:1px solid var(--border);border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .14s;}
+        .exp-util-btn:hover{border-color:var(--green-mid);color:var(--green-dk);}
+      </style>
+
+      <div class="exp-grid">
+        <div class="exp-card exp-card-primary">
+          <div>
+            <h3>📦 Full ZIP Package</h3>
+            <p>Everything in one download — your CSV data, original KML boundary file, and Haney soil results.</p>
+          </div>
+          <div class="exp-badge-list">
+            <div class="exp-badge"><span>✓</span> ARVA Crop Force CSV</div>
+            <div class="exp-badge"><span>✓</span> Field boundaries KML (if uploaded)</div>
+            <div class="exp-badge"><span>✓</span> Haney soil results CSV (if uploaded)</div>
+            <div class="exp-badge"><span>✓</span> Submission summary JSON</div>
+          </div>
+          <button class="btn-exp-primary" onclick="exportZip()">⬇ Download ZIP Package</button>
+          <div class="exp-zip-progress" id="zip-progress">Building package…</div>
+        </div>
+
+        <div class="exp-card exp-card-secondary">
+          <div>
+            <h3>📄 CSV Only</h3>
+            <p>Download just the ARVA Crop Force CSV — ready to upload directly to the platform.</p>
+          </div>
+          <div class="exp-badge-list">
+            <div class="exp-badge-sec"><span>✓</span> All farm & field data</div>
+            <div class="exp-badge-sec"><span>✓</span> Nutrient management records</div>
+            <div class="exp-badge-sec"><span>✓</span> Crop plan & soil sampling</div>
+            <div class="exp-badge-sec"><span>✓</span> All practices & attestations</div>
+          </div>
+          <button class="btn-exp-secondary" onclick="exportCSV()">⬇ Download CSV</button>
+        </div>
+      </div>
+
+      <div class="wz-comp-summary">
+        <div class="wz-comp-title">Submission completeness</div>
+        <div class="comp-grid" id="comp-grid2"></div>
+      </div>
+
+      <hr class="exp-divider"/>
+      <div class="exp-utils">
+        <button class="exp-util-btn" onclick="window.print()">🖨 Print</button>
+        <button class="exp-util-btn" onclick="exportJSON()">{ } Export JSON</button>
+        <button class="exp-util-btn" onclick="clearAll()">↺ Clear all data</button>
+      </div>
+
+      <div class="out-box" id="out-box" style="margin-top:1rem;">
+        <div class="out-hdr"><span class="out-lbl">CSV Preview</span><button class="cp-btn" onclick="navigator.clipboard.writeText(document.querySelector('#out-box pre').textContent)">Copy</button></div>
+        <pre id="out-pre"></pre>
+      </div>
+    `;
+  }
+
+  // Sections that have inner sec-body content — render a card that mirrors it
+  return `<div class="wz-card"><div class="sec-body" id="wz-body-${step.id}"></div></div>`;
+}
+
+function showStep(idx) {
+  // 1. Restore content from whichever step is currently visible back to hidden DOM
+  //    Do this BEFORE changing wz_current so we know which step to restore
+  const prevStep = WZ_STEPS[wz_current];
+  if (prevStep && wz_current !== idx) {
+    const needsRestore = prevStep.id !== 'uploads' && prevStep.id !== 'export' && prevStep.id !== 'nutrient';
+    if (needsRestore) restoreSectionContent(prevStep.id);
+  }
+
+  wz_current = idx;
+
+  // 2. Update pills
+  document.querySelectorAll('.wz-step-pill').forEach((p, i) => {
+    p.classList.toggle('active', i === idx);
+  });
+  // 3. Update views
+  document.querySelectorAll('.wz-step-view').forEach((v, i) => {
+    v.classList.toggle('active', i === idx);
+  });
+  // 4. Scroll strip to show active pill
+  const activePill = document.getElementById(`wz-pill-${idx}`);
+  if (activePill) activePill.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+
+  // 5. Mirror content into the newly active step
+  const step = WZ_STEPS[idx];
+  const needsMirror = step.id !== 'uploads' && step.id !== 'export' && step.id !== 'nutrient';
+  if (needsMirror) {
+    mirrorSectionContent(step.id);
+  }
+  if (step.id === 'uploads') {
+    syncUploadZones();
+  }
+  if (step.id === 'export') {
+    syncExportGrid();
+  }
+  if (step.id === 'nutrient') {
+    setTimeout(nmRender, 30);
+  }
+
+  // Update footer
+  const prevBtn = document.getElementById('wz-prev-btn');
+  const nextBtn = document.getElementById('wz-next-btn');
+  const counter = document.getElementById('wz-step-counter');
+  prevBtn.style.visibility = idx === 0 ? 'hidden' : 'visible';
+  const isLast = idx === WZ_STEPS.length - 1;
+  nextBtn.textContent = isLast ? '⬇ Export' : 'Continue →';
+  nextBtn.className = 'btn-wz-next' + (isLast ? ' is-export' : '');
+  if (isLast) nextBtn.onclick = () => showStep(WZ_STEPS.length - 1);
+  else nextBtn.onclick = wizardNext;
+  counter.textContent = `Step ${idx+1} of ${WZ_STEPS.length}`;
+
+  // Progress fill
+  document.getElementById('wz-prog-fill').style.width = ((idx / (WZ_STEPS.length-1))*100)+'%';
+
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function mirrorSectionContent(sectionId) {
+  const src = document.getElementById('body-'+sectionId);
+  const dst = document.getElementById('wz-body-'+sectionId);
+  if (src && dst) {
+    // Move actual DOM nodes (live, not clone) so IDs and event handlers stay intact
+    while (dst.firstChild) dst.removeChild(dst.firstChild);
+    while (src.firstChild) dst.appendChild(src.firstChild);
+  }
+}
+
+function restoreSectionContent(sectionId) {
+  const src = document.getElementById('body-'+sectionId);
+  const dst = document.getElementById('wz-body-'+sectionId);
+  if (src && dst) {
+    while (src.firstChild) src.removeChild(src.firstChild);
+    while (dst.firstChild) src.appendChild(dst.firstChild);
+  }
+}
+
+function syncUploadZones() {
+  // Mirror status from hidden zones to visible ones
+  ['csv','kml'].forEach(type => {
+    const orig = document.getElementById(type+'Zone');
+    const mirror = document.getElementById(type+'Zone2');
+    const origStatus = document.getElementById(type+'Status');
+    const mirrorStatus = document.getElementById(type+'Status2');
+    if (!orig || !mirror) return;
+    // Mirror loaded/err class
+    mirror.className = orig.className.replace('uzone','uzone');
+    if (origStatus && mirrorStatus) mirrorStatus.textContent = origStatus.textContent;
+    // Mirror preview
+    const origPrev = document.getElementById(type+'-preview-wrap');
+    const mirrorPrev = document.getElementById(type+'-preview-wrap2');
+    if (origPrev && mirrorPrev) mirrorPrev.innerHTML = origPrev.innerHTML;
+  });
+}
+
+function syncExportGrid() {
+  const src = document.getElementById('comp-grid');
+  const dst = document.getElementById('comp-grid2');
+  if (src && dst) dst.innerHTML = src.innerHTML;
+}
+
+// Override updateAll to also refresh wizard UI
+const _origUpdateAll = typeof updateAll === 'function' ? updateAll : null;
+
+function wizardUpdateAll() {
+  if (_origUpdateAll) _origUpdateAll();
+
+  // Sync progress badge
+  const pct = document.getElementById('prog-pct');
+  const detail = document.getElementById('prog-detail');
+  const footer = document.getElementById('wz-footer-status');
+  if (pct && footer) footer.innerHTML = `<strong>${pct.textContent}</strong> complete`;
+
+  // Sync practices badge
+  const pracCount = document.getElementById('prac-count');
+  const mini = document.getElementById('wz-prac-mini');
+  if (pracCount && mini) {
+    mini.textContent = pracCount.textContent;
+    mini.className = 'wz-prac-mini' + (pracCount.classList.contains('warn') ? ' warn' : '');
+  }
+
+  // Update done state on pills based on section statuses
+  WZ_STEPS.forEach((step, i) => {
+    const pill = document.getElementById(`wz-pill-${i}`);
+    if (!pill) return;
+    const stat = document.getElementById('status-'+step.id);
+    if (stat && stat.textContent && stat.textContent !== 'Not started') {
+      pill.classList.add('done');
+    }
+    const dot = pill.querySelector('.wz-step-num');
+    if (dot && stat && stat.textContent && stat.textContent !== 'Not started') {
+      dot.innerHTML = '✓';
+    }
+  });
+
+  // Re-sync current step upload zones if on uploads step
+  if (WZ_STEPS[wz_current] && WZ_STEPS[wz_current].id === 'uploads') syncUploadZones();
+  if (WZ_STEPS[wz_current] && WZ_STEPS[wz_current].id === 'export') syncExportGrid();
+}
+
+// Patch is applied in wizardInit after original functions exist
+
+
+function wizardNext() {
+  if (wz_current < WZ_STEPS.length - 1) {
+    showStep(wz_current + 1);
+  }
+}
+
+function wizardPrev() {
+  if (wz_current > 0) {
+    showStep(wz_current - 1);
+  }
+}
+
+// Patch handleCSV and handleKML to also update upload zone mirrors
+const _oldHandleCSV = typeof handleCSV === 'function' ? handleCSV : null;
+const _oldHandleKML = typeof handleKML === 'function' ? handleKML : null;
+if (_oldHandleCSV) {
+  window.handleCSV = function(f) {
+    _oldHandleCSV(f);
+    setTimeout(syncUploadZones, 200);
+    setTimeout(syncUploadZones, 800);
+  };
+}
+if (_oldHandleKML) {
+  window.handleKML = function(f) {
+    _oldHandleKML(f);
+    setTimeout(syncUploadZones, 200);
+    setTimeout(syncUploadZones, 800);
+  };
+}
+
+// Wire up mirror upload zones to the real file inputs
+document.addEventListener('DOMContentLoaded', () => {
+  ['csv','kml'].forEach(type => {
+    const zone2 = document.getElementById(type+'Zone2');
+    const input = document.getElementById(type+'Input');
+    if (zone2 && input && !zone2.dataset.bound) {
+      zone2.dataset.bound = '1';
+      zone2.addEventListener('click', e => {
+        if (e.target && e.target.tagName && e.target.tagName.toLowerCase() === 'button') return;
+        input.click();
+      });
+    }
+  });
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// NUTRIENT MANAGEMENT MODULE
+// Mirrors Fertility Plan logic: crop-by-crop, fertilizer products,
+// micronutrient packs, organic/amendment inputs, CSV import/export
+// ═══════════════════════════════════════════════════════════════
+
+const NM = {
+  crops: [],      // [{name, acres, fields, products:[], micros:[], amendments:[]}]
+  counter: 0,
+};
+
+const nmNum = v => isFinite(parseFloat(v)) ? parseFloat(v) : 0;
+const nmFmt = (n, d=2) => isFinite(n) ? Number(n).toFixed(d) : (0).toFixed(d);
+
+function nmPoundsEq(rate, unit) {
+  if (unit === 'lbs') return rate;
+  if (unit === 'Tons') return rate * 2000;
+  return 0;
+}
+
+function nmGetFarmInfo() {
+  return {
+    name: (document.getElementById('farm-name') || {}).value || '',
+    acres: nmNum((document.getElementById('total-acres') || {}).value),
+    fields: nmNum((document.getElementById('total-fields') || {}).value),
+  };
+}
+
+// ── Render ────────────────────────────────────────────────────
+function nmRender() {
+  const root = document.getElementById('wz-nutrient-root');
+  if (!root) return;
+
+  const farm = nmGetFarmInfo();
+  const totalAcres = farm.acres;
+
+  // Summary strip
+  let totalN=0, totalP=0, totalK=0, sumAcres=0;
+  NM.crops.forEach(c => {
+    const ac = nmNum(c.acres);
+    sumAcres += ac;
+    c.products.forEach(p => {
+      const lb = nmPoundsEq(nmNum(p.rate), p.unit);
+      totalN += lb * (nmNum(p.nPct)/100) * ac;
+      totalP += lb * (nmNum(p.pPct)/100) * ac;
+      totalK += lb * (nmNum(p.kPct)/100) * ac;
+    });
+  });
+  const avgN = sumAcres ? totalN/sumAcres : 0;
+  const avgP = sumAcres ? totalP/sumAcres : 0;
+  const avgK = sumAcres ? totalK/sumAcres : 0;
+
+  // Build tab buttons
+  const tabs = NM.crops.map((c,i) => `
+    <button type="button" onclick="nmShowCrop(${i})" class="nm-tab${NM.activeCrop===i?' nm-tab-active':''}">
+      ${c.name || `Crop ${i+1}`}
+    </button>`).join('');
+
+  // Build active crop content
+  const ci = NM.activeCrop || 0;
+  const crop = NM.crops[ci];
+  const cropContent = crop ? nmRenderCrop(crop, ci) : '';
+
+  root.innerHTML = `
+    <style>
+      .nm-upload-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;}
+      .nm-upload-hdr{padding:.6rem 1rem;background:var(--gray-lt);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+      .nm-upload-hdr h3{font-size:13px;font-weight:600;margin:0;}
+      .nm-summary-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1rem;}
+      .nm-stat{background:#fff;border:1px solid var(--border);border-radius:10px;padding:.6rem .8rem;}
+      .nm-stat .sl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray);}
+      .nm-stat .sv{font-size:17px;font-weight:800;color:var(--green-dk);margin-top:2px;}
+      .nm-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;}
+      .nm-tab{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:#fff;color:var(--gray);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .14s;}
+      .nm-tab:hover{border-color:var(--green-mid);color:var(--green-dk);}
+      .nm-tab-active{background:var(--green-dk);color:#fff;border-color:var(--green-dk);}
+      .nm-add-crop-btn{padding:6px 14px;border:1px dashed var(--green);border-radius:20px;background:var(--green-lt);color:var(--green-dk);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);}
+      .nm-crop-hdr{background:var(--gray-lt);border-bottom:1px solid var(--border);padding:.75rem 1rem;display:grid;grid-template-columns:1.5fr 1fr 1fr auto;gap:10px;align-items:end;}
+      .nm-crop-hdr .fl{font-size:11px;font-weight:600;color:var(--gray);margin-bottom:4px;display:block;}
+      .nm-crop-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0;}
+      .nm-crop-stat{background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center;}
+      .nm-crop-stat .sl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);}
+      .nm-crop-stat .sv{font-size:14px;font-weight:800;color:var(--green-dk);margin-top:2px;}
+      .nm-sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gray);margin:.75rem 0 .4rem;padding-top:.75rem;border-top:1px solid var(--border);}
+      .nm-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px;margin-bottom:.5rem;}
+      .nm-table{width:100%;border-collapse:collapse;font-size:12px;min-width:900px;}
+      .nm-table th{background:var(--gray-lt);padding:6px 8px;text-align:left;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);border-bottom:1px solid var(--border);white-space:nowrap;}
+      .nm-table td{padding:5px 6px;border-bottom:1px solid var(--gray-lt);vertical-align:middle;}
+      .nm-table tr:last-child td{border-bottom:none;}
+      .nm-table input,.nm-table select{min-height:32px;padding:4px 7px;border-radius:7px;border:1px solid var(--border);font-size:12px;font-family:var(--font);width:100%;background:#fff;}
+      .nm-table input:focus,.nm-table select:focus{border-color:var(--green);outline:none;}
+      .nm-calc{background:var(--green-lt);color:var(--green-dk);font-weight:700;padding:5px 8px;border-radius:7px;font-size:12px;white-space:nowrap;}
+      .nm-add-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--green-dk);background:var(--green-lt);border:1px solid rgba(15,110,86,.28);border-radius:10px;padding:7px 13px;cursor:pointer;font-family:var(--font);font-weight:600;margin-top:4px;}
+      .nm-add-btn:hover{background:#c5ead9;}
+      .nm-rm-btn{padding:3px 9px;font-size:11px;color:var(--red);background:transparent;border:1px solid rgba(216,90,48,.22);border-radius:5px;cursor:pointer;font-family:var(--font);}
+      .nm-rm-btn:hover{background:var(--red-lt);}
+      .nm-yn-row{display:flex;align-items:center;gap:.75rem;padding:5px 0;border-bottom:1px solid var(--gray-lt);}
+      .nm-yn-row:last-child{border-bottom:none;}
+      .nm-yn-lbl{font-size:13px;flex:1;line-height:1.4;}
+      .nm-yn-btns{display:flex;gap:3px;}
+      .nm-yn-btn{padding:3px 14px;font-size:12px;font-weight:500;border-radius:20px;border:1px solid var(--border);cursor:pointer;background:transparent;color:var(--gray);font-family:var(--font);}
+      .nm-yn-btn.yes{background:var(--green-lt);color:var(--green-dk);border-color:var(--green);}
+      .nm-yn-btn.no{background:var(--red-lt);color:var(--red-dk);border-color:var(--red);}
+      .nm-optional-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--gray);background:#fff;border:1px dashed var(--border);border-radius:10px;padding:6px 13px;cursor:pointer;font-family:var(--font);font-weight:500;margin-right:6px;margin-top:4px;}
+      .nm-optional-btn:hover{border-color:var(--green-mid);color:var(--green-dk);}
+      @media(max-width:700px){.nm-crop-hdr{grid-template-columns:1fr 1fr;}.nm-crop-stats{grid-template-columns:repeat(2,1fr);}.nm-summary-strip{grid-template-columns:repeat(3,1fr);}}
+    </style>
+
+    <div class="nm-upload-card">
+      <div class="nm-upload-hdr">🌿 <h3>Import from Fertility Plan CSV</h3> <span style="font-size:11px;color:var(--gray);margin-left:auto;">Optional — or enter manually below</span></div>
+      <div style="padding:.75rem;">
+        <div class="uzone" id="nmImportZone" style="min-height:80px;">
+          <div class="uzone-icon">📥</div>
+          <span class="uzone-lbl">Fertility Plan CSV</span>
+          <div class="uzone-hint">Export from the SCI Fertilizer Inputs Calculator</div>
+          <button class="uzone-btn" type="button" onclick="event.stopPropagation();document.getElementById('nmImportInput').click()">Choose CSV</button>
+          <input type="file" id="nmImportInput" accept=".csv,.txt" class="file-real" onchange="if(this.files&&this.files[0])nmImportCSV(this.files[0])"/>
+          <div class="uzone-status" id="nmImportStatus"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nm-summary-strip">
+      <div class="nm-stat"><div class="sl">Total N</div><div class="sv">${nmFmt(totalN)}</div></div>
+      <div class="nm-stat"><div class="sl">Total P</div><div class="sv">${nmFmt(totalP)}</div></div>
+      <div class="nm-stat"><div class="sl">Total K</div><div class="sv">${nmFmt(totalK)}</div></div>
+      <div class="nm-stat"><div class="sl">Avg N/Ac</div><div class="sv">${nmFmt(avgN)}</div></div>
+      <div class="nm-stat"><div class="sl">Avg P/Ac</div><div class="sv">${nmFmt(avgP)}</div></div>
+      <div class="nm-stat"><div class="sl">Avg K/Ac</div><div class="sv">${nmFmt(avgK)}</div></div>
+      <div class="nm-stat"><div class="sl">Crop Acres</div><div class="sv">${nmFmt(sumAcres)}</div></div>
+    </div>
+
+    <div class="nm-tabs">
+      ${tabs}
+      <button type="button" class="nm-add-crop-btn" onclick="nmAddCrop()">+ Add Crop</button>
+    </div>
+
+    <div id="nm-crop-area">
+      ${cropContent}
+    </div>
+
+    <div style="margin-top:1.25rem;">
+      <div class="subsec-title">4R & Nutrient Management Attestations</div>
+      ${nmRenderAttestations()}
+    </div>
+  `;
+
+  // Wire up import zone click
+  const zone = document.getElementById('nmImportZone');
+  const inp  = document.getElementById('nmImportInput');
+  if (zone && inp && !zone._bound) {
+    zone._bound = true;
+    zone.addEventListener('click', e => { if (e.target.tagName==='BUTTON') return; inp.click(); });
+  }
+}
+
+function nmRenderAttestations() {
+  const yns = [
+    ['ninh', 'Product used Nitrogen Inhibitor'],
+    ['slowrel', 'Slow-Release Fertilizer used'],
+    ['vrt', 'Applied with Variable Rate Technology (VRT)'],
+    ['nmp', 'Documented on a Nutrient Management Plan'],
+    ['4r', 'Application was 4R compliant'],
+  ];
+  return yns.map(([key, lbl]) => {
+    const cur = YN[key] || '';
+    return `<div class="nm-yn-row">
+      <span class="nm-yn-lbl">${lbl}</span>
+      <div class="nm-yn-btns">
+        <button type="button" class="nm-yn-btn${cur==='yes'?' yes':''}" onclick="setYN('${key}','yes');nmRender()">Yes</button>
+        <button type="button" class="nm-yn-btn${cur==='no'?' no':''}" onclick="setYN('${key}','no');nmRender()">No</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function nmRenderCrop(crop, ci) {
+  const ac = nmNum(crop.acres);
+
+  // Calc per-crop stats
+  let nAcre=0, pAcre=0, kAcre=0;
+  crop.products.forEach(p => {
+    const lb = nmPoundsEq(nmNum(p.rate), p.unit||'lbs');
+    nAcre += lb*(nmNum(p.nPct)/100);
+    pAcre += lb*(nmNum(p.pPct)/100);
+    kAcre += lb*(nmNum(p.kPct)/100);
+  });
+
+  const productRows = crop.products.map((p,pi) => `
+    <tr>
+      <td><input value="${p.name||''}" onchange="NM.crops[${ci}].products[${pi}].name=this.value;nmCalcAndRender()" placeholder="Urea, DAP, potash..." style="min-width:130px"/></td>
+      <td><input type="date" value="${p.date||''}" onchange="NM.crops[${ci}].products[${pi}].date=this.value;nmCalcAndRender()"/></td>
+      <td><input type="number" min="0" step="0.01" value="${p.rate||''}" onchange="NM.crops[${ci}].products[${pi}].rate=this.value;nmCalcAndRender()" placeholder="0" style="max-width:90px"/></td>
+      <td><select onchange="NM.crops[${ci}].products[${pi}].unit=this.value;nmCalcAndRender()">
+        ${['lbs','Tons','Gallons','Fluid oz'].map(u=>`<option${p.unit===u?' selected':''}>${u}</option>`).join('')}
+      </select></td>
+      <td class="nm-calc">${nmFmt(nmPoundsEq(nmNum(p.rate),p.unit||'lbs'))}</td>
+      <td><input type="number" min="0" max="100" step="0.01" value="${p.nPct||''}" onchange="NM.crops[${ci}].products[${pi}].nPct=this.value;nmCalcAndRender()" placeholder="0" style="max-width:70px"/></td>
+      <td><input type="number" min="0" max="100" step="0.01" value="${p.pPct||''}" onchange="NM.crops[${ci}].products[${pi}].pPct=this.value;nmCalcAndRender()" placeholder="0" style="max-width:70px"/></td>
+      <td><input type="number" min="0" max="100" step="0.01" value="${p.kPct||''}" onchange="NM.crops[${ci}].products[${pi}].kPct=this.value;nmCalcAndRender()" placeholder="0" style="max-width:70px"/></td>
+      <td class="nm-calc">${nmFmt(nmPoundsEq(nmNum(p.rate),p.unit||'lbs')*(nmNum(p.nPct)/100))}</td>
+      <td class="nm-calc">${nmFmt(nmPoundsEq(nmNum(p.rate),p.unit||'lbs')*(nmNum(p.pPct)/100))}</td>
+      <td class="nm-calc">${nmFmt(nmPoundsEq(nmNum(p.rate),p.unit||'lbs')*(nmNum(p.kPct)/100))}</td>
+      <td><input value="${p.notes||''}" onchange="NM.crops[${ci}].products[${pi}].notes=this.value" placeholder="Optional" style="min-width:100px"/></td>
+      <td><button type="button" class="nm-rm-btn" onclick="NM.crops[${ci}].products.splice(${pi},1);nmCalcAndRender()">×</button></td>
+    </tr>`).join('');
+
+  const microRows = crop.micros.map((m,mi) => `
+    <tr>
+      <td><input value="${m.name||''}" onchange="NM.crops[${ci}].micros[${mi}].name=this.value" placeholder="Micronutrient pack" style="min-width:140px"/></td>
+      <td><input type="date" value="${m.date||''}" onchange="NM.crops[${ci}].micros[${mi}].date=this.value"/></td>
+      <td><input value="${m.contains||''}" onchange="NM.crops[${ci}].micros[${mi}].contains=this.value" placeholder="Boron, zinc, sulfur..." style="min-width:200px"/></td>
+      <td><input type="number" min="0" step="0.01" value="${m.rate||''}" onchange="NM.crops[${ci}].micros[${mi}].rate=this.value;nmCalcAndRender()" placeholder="0" style="max-width:90px"/></td>
+      <td><select onchange="NM.crops[${ci}].micros[${mi}].unit=this.value;nmCalcAndRender()">
+        ${['lbs','Fluid oz','Tons','Gallons'].map(u=>`<option${m.unit===u?' selected':''}>${u}</option>`).join('')}
+      </select></td>
+      <td class="nm-calc">${nmFmt(nmNum(m.rate)*ac)} ${m.unit||'lbs'}</td>
+      <td><input value="${m.notes||''}" onchange="NM.crops[${ci}].micros[${mi}].notes=this.value" placeholder="Optional" style="min-width:100px"/></td>
+      <td><button type="button" class="nm-rm-btn" onclick="NM.crops[${ci}].micros.splice(${mi},1);nmCalcAndRender()">×</button></td>
+    </tr>`).join('');
+
+  const amendRows = crop.amendments.map((a,ai) => `
+    <tr>
+      <td><select onchange="NM.crops[${ci}].amendments[${ai}].type=this.value">
+        ${['Compost','Manure','Biochar','Compost Extract','Compost Tea','Humic Acid','Fulvic Acid','Microbial Inoculant','Lime','Gypsum'].map(t=>`<option${a.type===t?' selected':''}>${t}</option>`).join('')}
+      </select></td>
+      <td><input type="date" value="${a.date||''}" onchange="NM.crops[${ci}].amendments[${ai}].date=this.value"/></td>
+      <td><input value="${a.name||''}" onchange="NM.crops[${ci}].amendments[${ai}].name=this.value" placeholder="Product, source, or blend" style="min-width:150px"/></td>
+      <td><input type="number" min="0" step="0.01" value="${a.rate||''}" onchange="NM.crops[${ci}].amendments[${ai}].rate=this.value;nmCalcAndRender()" placeholder="0" style="max-width:90px"/></td>
+      <td><select onchange="NM.crops[${ci}].amendments[${ai}].unit=this.value;nmCalcAndRender()">
+        ${['Tons','lbs','Gallons','Fluid oz'].map(u=>`<option${a.unit===u?' selected':''}>${u}</option>`).join('')}
+      </select></td>
+      <td class="nm-calc">${nmFmt(nmNum(a.rate)*ac)} ${a.unit||'Tons'}</td>
+      <td><input value="${a.notes||''}" onchange="NM.crops[${ci}].amendments[${ai}].notes=this.value" placeholder="Optional" style="min-width:100px"/></td>
+      <td><button type="button" class="nm-rm-btn" onclick="NM.crops[${ci}].amendments.splice(${ai},1);nmCalcAndRender()">×</button></td>
+    </tr>`).join('');
+
+  return `
+    <div class="wz-card" style="overflow:visible">
+      <div class="nm-crop-hdr">
+        <div>
+          <span class="fl">Crop Name</span>
+          <input value="${crop.name||''}" onchange="NM.crops[${ci}].name=this.value;nmCalcAndRender()" placeholder="Corn, soybeans, wheat..." style="font-size:14px;font-weight:600"/>
+        </div>
+        <div>
+          <span class="fl">Crop Acres</span>
+          <input type="number" min="0" step="0.01" value="${crop.acres||''}" onchange="NM.crops[${ci}].acres=this.value;nmCalcAndRender()" placeholder="0"/>
+        </div>
+        <div>
+          <span class="fl">Crop Fields</span>
+          <input type="number" min="0" step="1" value="${crop.fields||''}" onchange="NM.crops[${ci}].fields=this.value" placeholder="0"/>
+        </div>
+        ${NM.crops.length>1?`<button type="button" class="nm-rm-btn" style="align-self:end;margin-bottom:2px" onclick="NM.crops.splice(${ci},1);NM.activeCrop=Math.max(0,${ci}-1);nmCalcAndRender()">Remove</button>`:'<div></div>'}
+      </div>
+      <div style="padding:.75rem 1rem">
+        <div class="nm-crop-stats">
+          <div class="nm-crop-stat"><div class="sl">N / Acre</div><div class="sv">${nmFmt(nAcre)}</div></div>
+          <div class="nm-crop-stat"><div class="sl">P / Acre</div><div class="sv">${nmFmt(pAcre)}</div></div>
+          <div class="nm-crop-stat"><div class="sl">K / Acre</div><div class="sv">${nmFmt(kAcre)}</div></div>
+          <div class="nm-crop-stat"><div class="sl">Products</div><div class="sv">${crop.products.filter(p=>p.name||p.rate).length}</div></div>
+          <div class="nm-crop-stat"><div class="sl">Other Inputs</div><div class="sv">${crop.micros.filter(m=>m.name||m.rate).length+crop.amendments.filter(a=>a.name||a.rate).length}</div></div>
+        </div>
+
+        <div class="nm-sec-title">Fertilizer Products</div>
+        <div class="nm-table-wrap">
+          <table class="nm-table">
+            <thead><tr>
+              <th style="min-width:140px">Product Name</th>
+              <th>App. Date</th><th>Rate/Acre</th><th>Unit</th>
+              <th>Equiv. lbs/Ac</th><th>N %</th><th>P %</th><th>K %</th>
+              <th>N/Acre</th><th>P/Acre</th><th>K/Acre</th>
+              <th>Notes</th><th></th>
+            </tr></thead>
+            <tbody>${productRows}</tbody>
+          </table>
+        </div>
+        <button type="button" class="nm-add-btn" onclick="NM.crops[${ci}].products.push({name:'',date:'',rate:'',unit:'lbs',nPct:'',pPct:'',kPct:'',notes:''});nmCalcAndRender()">+ Add Fertilizer Product</button>
+
+        ${crop.micros.length||crop._showMicro ? `
+        <div class="nm-sec-title">Fertility Pack / Micronutrients</div>
+        <div class="nm-table-wrap">
+          <table class="nm-table" style="min-width:760px">
+            <thead><tr>
+              <th style="min-width:150px">Pack / Product Name</th>
+              <th>App. Date</th><th style="min-width:200px">What It Contains</th>
+              <th>Rate/Acre</th><th>Unit</th><th>Total Product</th><th>Notes</th><th></th>
+            </tr></thead>
+            <tbody>${microRows}</tbody>
+          </table>
+        </div>
+        <button type="button" class="nm-add-btn" onclick="NM.crops[${ci}].micros.push({name:'',date:'',contains:'',rate:'',unit:'lbs',notes:''});nmCalcAndRender()">+ Add Micronutrient</button>
+        ` : `<button type="button" class="nm-optional-btn" onclick="NM.crops[${ci}]._showMicro=true;NM.crops[${ci}].micros.push({name:'',date:'',contains:'',rate:'',unit:'lbs',notes:''});nmCalcAndRender()">+ Add Fertility Pack / Micronutrients</button>`}
+
+        ${crop.amendments.length||crop._showAmend ? `
+        <div class="nm-sec-title">Organic Inputs & Soil Amendments</div>
+        <div class="nm-table-wrap">
+          <table class="nm-table" style="min-width:780px">
+            <thead><tr>
+              <th>Input Type</th><th>App. Date</th>
+              <th style="min-width:160px">Product / Source</th>
+              <th>Rate/Acre</th><th>Unit</th><th>Total Product</th><th>Notes</th><th></th>
+            </tr></thead>
+            <tbody>${amendRows}</tbody>
+          </table>
+        </div>
+        <button type="button" class="nm-add-btn" onclick="NM.crops[${ci}].amendments.push({type:'Compost',date:'',name:'',rate:'',unit:'Tons',notes:''});nmCalcAndRender()">+ Add Organic Input / Amendment</button>
+        ` : `<button type="button" class="nm-optional-btn" onclick="NM.crops[${ci}]._showAmend=true;NM.crops[${ci}].amendments.push({type:'Compost',date:'',name:'',rate:'',unit:'Tons',notes:''});nmCalcAndRender()">+ Add Organic Input / Soil Amendment</button>`}
+      </div>
+    </div>`;
+}
+
+function nmShowCrop(i) {
+  NM.activeCrop = i;
+  nmRender();
+}
+
+function nmAddCrop() {
+  NM.crops.push({ name:'', acres:'', fields:'', products:[{name:'',date:'',rate:'',unit:'lbs',nPct:'',pPct:'',kPct:'',notes:''}], micros:[], amendments:[] });
+  NM.activeCrop = NM.crops.length - 1;
+  nmCalcAndRender();
+}
+
+function nmCalcAndRender() {
+  nmRender();
+  // also sync to old arva fert section status for the progress bar
+  const hasFert = NM.crops.some(c => c.products.some(p => p.name||p.rate));
+  const statusEl = document.getElementById('status-fert');
+  if (statusEl) statusEl.textContent = hasFert ? 'In progress' : 'Not started';
+  const hasMicro = NM.crops.some(c => c.micros.some(m => m.name||m.rate));
+  const hasAmend = NM.crops.some(c => c.amendments.some(a => a.name||a.rate));
+  const statusM = document.getElementById('status-manure');
+  if (statusM) statusM.textContent = hasAmend ? 'In progress' : 'Not started';
+  const statusA = document.getElementById('status-amend');
+  if (statusA) statusA.textContent = hasAmend ? 'In progress' : 'Not started';
+  if (typeof updateAll === 'function') updateAll();
+}
+
+// ── CSV Import ────────────────────────────────────────────────
+function nmImportCSV(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const text = e.target.result;
+      const lines = text.split(/\r?\n/);
+      const statusEl = document.getElementById('nmImportStatus');
+
+      // Find the header row (contains 'Crop Name' and 'Input Category')
+      let headerIdx = -1;
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].includes('Crop Name') && lines[i].includes('Input Category')) {
+          headerIdx = i;
+          break;
+        }
+      }
+      if (headerIdx < 0) throw new Error('Could not find data header row — check this is a Fertility Plan CSV');
+
+      function parseLine(line) {
+        const cols = []; let cur = '', inQ = false;
+        for (const c of line) {
+          if (c === '"') { inQ = !inQ; }
+          else if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+          else { cur += c; }
+        }
+        cols.push(cur.trim());
+        return cols;
+      }
+
+      const headers = parseLine(lines[headerIdx]);
+      const idx = h => headers.findIndex(x => x.toLowerCase().includes(h.toLowerCase()));
+      const iCrop = idx('Crop Name');
+      const iCat  = idx('Input Category');
+      const iDate = idx('Application Date');
+      const iProd = idx('Product Or Pack Name');
+      const iType = idx('Application Type');
+      const iRate = idx('Rate Per Acre');
+      const iUnit = idx('Unit');
+      const iN    = idx('N Percent');
+      const iP    = idx('P Percent');
+      const iK    = idx('K Percent');
+      const iMicro= idx('Micronutrients');
+      const iNotes= idx('Notes');
+
+      const cropMap = {};
+      for (let i = headerIdx + 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const cols = parseLine(lines[i]);
+        const cropName = cols[iCrop] || '';
+        const cat = (cols[iCat] || '').toLowerCase();
+        if (!cropName && !cat) continue;
+        if (!cropMap[cropName]) cropMap[cropName] = { name:cropName, acres:'', fields:'', products:[], micros:[], amendments:[] };
+        const c = cropMap[cropName];
+        if (cat.includes('fertilizer product') || cat.includes('fertilizer')) {
+          c.products.push({
+            name: cols[iProd]||'', date: cols[iDate]||'', rate: cols[iRate]||'',
+            unit: cols[iUnit]||'lbs', nPct: cols[iN]||'', pPct: cols[iP]||'', kPct: cols[iK]||'',
+            notes: iNotes>=0 ? (cols[iNotes]||'') : ''
+          });
+        } else if (cat.includes('micronutrient') || cat.includes('fertility pack')) {
+          c.micros.push({
+            name: cols[iProd]||'', date: cols[iDate]||'',
+            contains: iMicro>=0 ? (cols[iMicro]||'') : '',
+            rate: cols[iRate]||'', unit: cols[iUnit]||'lbs',
+            notes: iNotes>=0 ? (cols[iNotes]||'') : ''
+          });
+        } else if (cat.includes('organic') || cat.includes('amendment')) {
+          c.amendments.push({
+            type: cols[iType]||'Compost', date: cols[iDate]||'', name: cols[iProd]||'',
+            rate: cols[iRate]||'', unit: cols[iUnit]||'Tons',
+            notes: iNotes>=0 ? (cols[iNotes]||'') : ''
+          });
+        }
+      }
+
+      const imported = Object.values(cropMap);
+      if (!imported.length) throw new Error('No crop data rows found in this CSV');
+
+      // Ensure each crop has at least one blank product row
+      imported.forEach(c => { if (!c.products.length) c.products.push({name:'',date:'',rate:'',unit:'lbs',nPct:'',pPct:'',kPct:'',notes:''}); });
+
+      NM.crops = imported;
+      NM.activeCrop = 0;
+      if (statusEl) { statusEl.textContent = `✓ Imported ${imported.length} crop(s)`; }
+      const zone = document.getElementById('nmImportZone');
+      if (zone) zone.classList.add('loaded');
+      nmCalcAndRender();
+    } catch(err) {
+      const statusEl = document.getElementById('nmImportStatus');
+      if (statusEl) statusEl.textContent = '✗ ' + err.message;
+      const zone = document.getElementById('nmImportZone');
+      if (zone) zone.classList.add('err');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ── CSV Export rows (called from main flattenForCSV) ─────────
+function nmGetExportRows(baseRowFn) {
+  const rows = [];
+  NM.crops.forEach((crop, ci) => {
+    const ac = nmNum(crop.acres);
+    crop.products.forEach((p, pi) => {
+      if (!p.name && !p.rate) return;
+      const lb = nmPoundsEq(nmNum(p.rate), p.unit||'lbs');
+      const r = baseRowFn('Fertilizer', 'fertilizer_product', pi+1);
+      r['Crop']                             = crop.name || ('Crop '+(ci+1));
+      r['Crop Acres']                       = crop.acres || '';
+      r['Field Name']                       = crop.fields || '';
+      r['Product or Activity']              = p.name || '';
+      r['Date']                             = p.date || '';
+      r['Rate']                             = p.rate || '';
+      r['Rate Unit']                        = p.unit || 'lbs';
+      r['N-P-K Analysis']                   = [p.nPct,p.pPct,p.kPct].filter(v=>v!=='').join('-');
+      r['Nitrogen Units per Acre']          = nmFmt(lb*(nmNum(p.nPct)/100));
+      r['Phosphorus (P2O5) Units per Acre'] = nmFmt(lb*(nmNum(p.pPct)/100));
+      r['Potassium (K2O) Units per Acre']   = nmFmt(lb*(nmNum(p.kPct)/100));
+      r['Total Nitrogen Units']             = nmFmt(lb*(nmNum(p.nPct)/100)*ac);
+      r['Total Phosphorus Units']           = nmFmt(lb*(nmNum(p.pPct)/100)*ac);
+      r['Total Potassium Units']            = nmFmt(lb*(nmNum(p.kPct)/100)*ac);
+      r['Total Product']                    = nmFmt(nmNum(p.rate)*ac);
+      r['Notes']                            = p.notes || '';
+      rows.push(r);
+    });
+    crop.micros.forEach((m, mi) => {
+      if (!m.name && !m.rate) return;
+      const r = baseRowFn('Fertilizer', 'micronutrient_pack', mi+1);
+      r['Crop']                    = crop.name || ('Crop '+(ci+1));
+      r['Crop Acres']              = crop.acres || '';
+      r['Product or Activity']     = m.name || '';
+      r['Date']                    = m.date || '';
+      r['Rate']                    = m.rate || '';
+      r['Rate Unit']               = m.unit || 'lbs';
+      r['Micronutrient Contents']  = m.contains || '';
+      r['Total Product']           = nmFmt(nmNum(m.rate)*ac)+' '+(m.unit||'lbs');
+      r['Notes']                   = m.notes || '';
+      rows.push(r);
+    });
+    crop.amendments.forEach((a, ai) => {
+      if (!a.name && !a.rate) return;
+      const r = baseRowFn('Fertilizer', 'organic_amendment', ai+1);
+      r['Crop']                = crop.name || ('Crop '+(ci+1));
+      r['Crop Acres']          = crop.acres || '';
+      r['Product or Activity'] = a.name || '';
+      r['Date']                = a.date || '';
+      r['Rate']                = a.rate || '';
+      r['Rate Unit']           = a.unit || 'Tons';
+      r['Application Type']    = a.type || '';
+      r['Total Product']       = nmFmt(nmNum(a.rate)*ac)+' '+(a.unit||'Tons');
+      r['Notes']               = a.notes || '';
+      rows.push(r);
+    });
+  });
+  return rows;
+}
+
+// ── Init: start with one blank crop ──────────────────────────
+if (NM.crops.length === 0) {
+  NM.crops.push({ name:'', acres:'', fields:'', products:[{name:'',date:'',rate:'',unit:'lbs',nPct:'',pPct:'',kPct:'',notes:''}], micros:[], amendments:[] });
+  NM.activeCrop = 0;
+}
+
+// nmRender is called directly from showStep — no wrapper needed
+
+
 </script>
 </body>
 </html>
