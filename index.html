@@ -1417,11 +1417,13 @@ const amendF=[
   {id:'notes',label:'Notes',type:'text',req:false,placeholder:'Optional'}
 ];
 const harvestF=[
+  {id:'crop',label:'Crop name',type:'text',req:true,placeholder:'e.g. Corn, Soybeans, Rice'},
   {id:'date',label:'Harvest date',type:'date',req:true},
-  {id:'yield',label:'Yield and unit',type:'text',req:true,placeholder:'e.g. 185 bu/ac'},
+  {id:'yield',label:'Yield',type:'text',req:true,placeholder:'e.g. 185'},
+  {id:'unit',label:'Unit',type:'text',req:true,placeholder:'e.g. bu/ac, tons/ac, lbs'},
   {id:'residue',label:'% residue removed',type:'number',req:true,placeholder:'0–100'},
   {id:'burn',label:'Residue burning status',type:'select',opts:['No burning','Burned'],req:true},
-  {id:'type',label:'Type of harvest',type:'select',opts:['grain','silage','hay','straw baling','other'],req:true}
+  {id:'type',label:'Harvest Options',type:'select',opts:['Grain','Silage','Hay','Straw','Forage','Seed','Other'],req:true}
 ];
 const coverF=[
   {id:'crop',label:'Cash crop / field area',type:'text',req:false,placeholder:'e.g. Corn'},
@@ -1475,6 +1477,7 @@ const irrF=[
   {id:'awdEvents',label:'AWD events performed',type:'number',req:false,placeholder:'e.g. 3 (AWD types only)'},
 ];
 const fpaF=[
+  {id:'cropName',label:'Crop name',type:'text',req:true,placeholder:'e.g. Corn'},
   {id:'name',label:'FPA name',type:'text',req:true,placeholder:'Elevator or facility name'},
   {id:'type',label:'FPA type',type:'select',opts:['Grain Elevator','Processing Plant','On-Farm Bins','Co-op','Feed Mill','Other'],req:true},
   {id:'location',label:'Location (address or lat/long)',type:'text',req:true},
@@ -2447,9 +2450,11 @@ function flattenForCSV(data){
   // Harvest
   (data.harvest||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'Harvest','harvest_event',i+1);
+    r['Crop']=a.crop||'';
     r['Date']=a.date||'';
     r['Product or Activity']=a.type||'';
     r['Rate']=a.yield||'';
+    r['Rate Unit']=a.unit||'';
     r['Notes']=`Residue removed: ${a.residue||''}; Residue burning: ${a.burn||''}`.replace(/; $/,'');
     rows.push(r);
   });
@@ -2515,6 +2520,7 @@ function flattenForCSV(data){
   // First point of aggregation
   (data.firstPointOfAggregation||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'First Point of Aggregation','fpa_delivery',i+1);
+    r['Crop']=a.cropName||'';
     r['Product or Activity']=a.name||'';
     r['Delivery Point Type']=a.type||'';
     r['Delivery Location']=a.location||'';
