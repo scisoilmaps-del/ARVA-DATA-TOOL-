@@ -323,6 +323,12 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 /* Hidden but functional old DOM elements */
 .sec-card{display:none!important;}
 .export-sec{display:none!important;}
+
+/* Rain-fed only per-crop rows */
+.rainfed-crop-row { grid-template-columns: 1.2fr .7fr .7fr 1.15fr auto !important; }
+@media (max-width: 780px) { .rainfed-crop-row { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+@media (max-width: 460px) { .rainfed-crop-row { grid-template-columns: 1fr !important; } }
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -574,7 +580,7 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 <div class="sec-card" id="card-irr">
 <div class="sec-hdr" onclick="toggle('irr')">
 <div class="sec-ico">💦</div>
-<div class="sec-info"><div class="sec-title">Irrigation</div><div class="sec-sub">Per-crop irrigation, source, cycles, and calculated water volume</div></div>
+<div class="sec-info"><div class="sec-title">Irrigation</div><div class="sec-sub">Crop-by-crop irrigation inputs, source, cycles, and calculated water volume</div></div>
 <span class="sec-stat" id="status-irr">Not started</span>
 <span class="chev" id="chev-irr">▾</span>
 </div>
@@ -589,9 +595,18 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
     <button class="yn-btn" id="yn-rainfed-no" onclick="setYN('rainfed','no');toggleRainFed()" style="padding:6px 18px;font-size:13px;">Uses Irrigation</button>
   </div>
 </div>
+<div id="rainfed-drainage-prompt" style="display:none;background:#fff;border:1px solid rgba(15,110,86,.22);border-left:4px solid var(--green);border-radius:11px;padding:10px 14px;margin:-4px 0 12px;">
+  <div style="font-size:12.5px;font-weight:800;color:var(--green-dk);margin-bottom:4px;">Rain Fed Only — crop-by-crop drainage records</div>
+  <div style="font-size:11.5px;color:var(--gray);line-height:1.4;margin-bottom:8px;">Add one rain-fed record per crop. Each crop needs a drainage type so the export follows the same per-crop logic as Nutrient Management.</div>
+  <div id="rainfed-crop-entries" style="display:grid;gap:8px;margin-bottom:8px;"></div>
+  <button class="add-btn" type="button" onclick="addRainFedCropRow();updateAll();" style="margin-top:2px;">+ Add rain-fed crop</button>
+  <div id="rainfed-drainage-status" style="font-size:11px;color:var(--danger);font-weight:800;margin-top:6px;display:none;">Each rain-fed crop needs a crop name and drainage type.</div>
+</div>
 <div id="irr-log-section">
+  <div class="note">Manual inputs now follow the Nutrient Management pattern: each irrigation record includes its own Crop Name, Crop Acres, and Crop Fields, while still using the ARVA irrigation calculations.</div>
+  <div class="tool-import-row"><div class="tool-import-card"><div class="uzone" id="irrigationPlanZone"><div class="uzone-icon">💦</div><span class="uzone-lbl">Upload Irrigation CSV</span><div class="uzone-hint">CSV exported from the SCI ARVA Irrigation Log</div><button class="uzone-btn" onclick="event.stopPropagation();document.getElementById('irrigationPlanInput').click()" type="button">Choose Irrigation CSV</button><input accept=".csv,.txt" class="file-real" id="irrigationPlanInput" onchange="if(this.files && this.files[0]) handleIrrigationPlanCSV(this.files[0])" type="file"/><div class="uzone-status" id="irrigationPlanStatus"></div></div></div></div>
   <div id="irr-entries"></div>
-  <button class="add-btn" onclick="addDyn('irr','Crop irrigation entry',irrF)">+ Add crop irrigation entry</button>
+  <button class="add-btn" onclick="addDyn('irr','Irrigation input',irrF)">+ Add irrigation entry</button>
 </div>
 <div class="subsec"><div class="subsec-title">Additional attestations</div>
 <div class="yn-row"><span class="yn-lbl">Attest to any flooding for wildlife</span><div class="yn-btns"><button class="yn-btn" id="yn-wildlife-yes" onclick="setYN('wildlife','yes')">Yes</button><button class="yn-btn" id="yn-wildlife-no" onclick="setYN('wildlife','no')">No</button></div></div>
@@ -695,7 +710,7 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 // ── STATE ──────────────────────────────────────────────────────
 let csvData = null, kmlData = null;
 let uploadedOriginalFiles = [];
-let importedToolData = {crop:0,fert:0,ipm:0,tillage:0};
+let importedToolData = {crop:0,fert:0,ipm:0,tillage:0,irr:0};
 const boundaryState = {};
 const YN = {};
 const EC = {}; // entry counters
@@ -1052,12 +1067,12 @@ function parseToolCSV(text, mustHave){
   const parsed=lines.map(splitCSVCols);
   let headerIdx=-1;
   for(let i=0;i<parsed.length;i++){
-    const lower=parsed[i].map(h=>h.trim().toLowerCase());
+    const lower=parsed[i].map(h=>String(h||'').replace(/^\uFEFF/,'').trim().toLowerCase());
     const ok=mustHave.every(h=>lower.includes(h.toLowerCase()));
     if(ok){headerIdx=i; break;}
   }
   if(headerIdx<0) throw new Error('Could not find the expected detailed header row for this tool export.');
-  const headers=parsed[headerIdx].map(h=>h.trim());
+  const headers=parsed[headerIdx].map(h=>String(h||'').replace(/^\uFEFF/,'').trim());
   const rows=[];
   for(let i=headerIdx+1;i<parsed.length;i++){
     const vals=parsed[i];
@@ -1288,6 +1303,59 @@ function handleTillagePlanCSV(file){
       importedToolData.tillage=rows.length;
       finishToolImport('tillagePlanZone','tillagePlanStatus',`${rows.length} tillage row(s) imported from ${file.name}`);
     }catch(err){failToolImport('tillagePlanZone','tillagePlanStatus',err.message);}
+  };
+  r.readAsText(file);
+}
+
+function inferIrrigationCropPractice(row){
+  const explicit=firstVal(row,['Crop / Practice Type','Crop Practice Type','Practice Type']);
+  if(explicit) return explicit;
+  const method=String(firstVal(row,['Water / Irrigation Method','Category','Irrigation Method'])||'').toLowerCase();
+  if(method.includes('rice') || method.includes('awd') || method.includes('flood')) return 'Rice Farming';
+  return 'Non-rice crop';
+}
+function handleIrrigationPlanCSV(file){
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      rememberUploadedFile('irrigation_csv', file, ev.target.result);
+      const rows=parseToolCSV(ev.target.result,['Farm Name','Crop Name','Water / Irrigation Method','Pump Name']);
+      populateFarmInfoFromRows(rows);
+      if(typeof setYN==='function') setYN('rainfed','no');
+      if(typeof toggleRainFed==='function') toggleRainFed();
+      clearPrefixEntries('irr');
+      rows.forEach(row=>{
+        const values={
+          cropPractice:inferIrrigationCropPractice(row),
+          season:firstVal(row,['Water / Irrigation Method','Category','Irrigation Method']),
+          drainageType:firstVal(row,['Drainage Type']),
+          cropName:firstVal(row,['Crop Name','Crop','Crop Year']),
+          cropAcres:firstVal(row,['Crop Acres','Acres','Irrigated Acres Used','Irrigated Acres']),
+          cropFields:firstVal(row,['Crop Fields','Field Count','Total Fields']),
+          cropYear:firstVal(row,['Crop Name','Crop','Crop Year']),
+          irrigatedAcres:firstVal(row,['Irrigated Acres Used','Irrigated Acres','Acres']),
+          pumpName:firstVal(row,['Pump Name','Product or Activity']),
+          waterSource:firstVal(row,['Water Source']),
+          pumpGPM:firstVal(row,['Pump/System GPM Fallback','Pump / System GPM Fallback','Pump Flow Rate (GPM)','Pump GPM']),
+          pressureCompGPM:firstVal(row,['Known total system / zone GPM (optional override)','Pressure Compensator GPM','Known Total System / Zone GPM','Effective Flow Rate Used GPM','Effective Flow Rate Used (GPM)']),
+          emitterGPM:firstVal(row,['Emitter GPM']),
+          emitterSpacingFt:firstVal(row,['Emitter Spacing ft','Emitter Spacing (ft)']),
+          dripRowSpacingFt:firstVal(row,['Drip Row Spacing ft','Drip Line / Row Spacing (ft)']),
+          sprinklerGPM:firstVal(row,['Sprinkler/Nozzle GPM','Sprinkler / Nozzle GPM','Sprinkler GPM']),
+          sprinklerSpacingFt:firstVal(row,['Sprinkler Spacing ft','Sprinkler Spacing (ft)']),
+          sprinklerLateralSpacingFt:firstVal(row,['Lateral/Tower Spacing ft','Lateral / Tower Spacing ft','Sprinkler Lateral Spacing (ft)']),
+          minHoursCycle:firstVal(row,['Min Hours Per Cycle','Min Hours per Cycle','Min hrs / Cycle']),
+          maxHoursCycle:firstVal(row,['Max Hours Per Cycle','Max Hours per Cycle','Max hrs / Cycle']),
+          minCyclesYear:firstVal(row,['Min Cycles Per Year','Min Irrigation Cycles per Year','Min Cycles / Year']),
+          maxCyclesYear:firstVal(row,['Max Cycles Per Year','Max Irrigation Cycles per Year','Max Cycles / Year']),
+          awdEvents:firstVal(row,['AWD Events Performed','AWD Events Performed (Rice Only)','AWD Events']),
+          notes:firstVal(row,['Notes'])
+        };
+        addDyn('irr','Irrigation input',irrF,values);
+      });
+      importedToolData.irr=rows.length;
+      finishToolImport('irrigationPlanZone','irrigationPlanStatus',`${rows.length} irrigation row(s) imported from ${file.name}`);
+    }catch(err){failToolImport('irrigationPlanZone','irrigationPlanStatus',err.message);}
   };
   r.readAsText(file);
 }
@@ -1605,10 +1673,12 @@ const BASE_IRRIGATION_METHODS=['Continuous Flood (CF)','AWD — Single Aeration'
 const DRAINAGE_TYPES=['No artificial drainage','Surface drainage','Subsurface / tile drainage','Open ditch drainage','Controlled drainage / outlet management','Tailwater recovery drainage','Other'];
 const irrF=[
   {id:'cropPractice',label:'Crop / practice type',type:'select',opts:['Non-rice crop','Rice Farming'],req:true},
+  {id:'cropName',label:'Crop Name',type:'text',req:false,placeholder:'e.g. Corn, soybeans, rice'},
+  {id:'cropAcres',label:'Crop Acres',type:'number',req:false,step:'0.01'},
+  {id:'cropFields',label:'Crop Fields',type:'number',req:false,step:'1'},
   {id:'season',label:'Water / irrigation method',type:'select',opts:BASE_IRRIGATION_METHODS,req:true},
   {id:'drainageType',label:'Drainage type',type:'select',opts:DRAINAGE_TYPES,req:false},
-  {id:'cropYear',label:'Crop irrigated',type:'select',opts:[],req:true},
-  {id:'irrigatedAcres',label:'Irrigated acres for this entry (optional)',type:'number',req:false,step:'0.01',placeholder:'Uses crop boundary acres if blank'},
+  {id:'irrigatedAcres',label:'Irrigated acres for this entry (optional)',type:'number',req:false,step:'0.01',placeholder:'Uses crop acres if blank'},
   {id:'pumpName',label:'Pump name',type:'text',req:true,placeholder:'e.g. Weining Pump'},
   {id:'waterSource',label:'Water source',type:'select',opts:['Well','Surface water','Municipal','Tailwater recovery','Other'],req:true},
   {id:'pumpGPM',label:'Pump / system GPM fallback',type:'number',req:true,placeholder:'e.g. 1200'},
@@ -1624,6 +1694,7 @@ const irrF=[
   {id:'minCyclesYear',label:'Min cycles / year',type:'number',req:true,placeholder:'e.g. 4'},
   {id:'maxCyclesYear',label:'Max cycles / year',type:'number',req:true,placeholder:'e.g. 4'},
   {id:'awdEvents',label:'AWD events performed',type:'number',req:false,placeholder:'e.g. 3 (AWD types only)'},
+  {id:'notes',label:'Notes',type:'text',req:false,placeholder:'Optional'},
 ];
 const fpaF=[
   {id:'cropName',label:'Crop name',type:'text',req:true,placeholder:'e.g. Corn'},
@@ -1716,6 +1787,18 @@ function cropPlannerCropNames(){
   return names;
 }
 
+
+function irrigationCropName(idx){
+  return document.getElementById(`irr_${idx}_cropName`)?.value || document.getElementById(`irr_${idx}_cropYear`)?.value || '';
+}
+function irrigationCropAcres(idx){
+  const entryAcres=parseFloat(document.getElementById(`irr_${idx}_cropAcres`)?.value||0) || 0;
+  if(entryAcres>0) return entryAcres;
+  const cropName=irrigationCropName(idx);
+  const match=cropPlannerRows().find(r=>normName(r.cropPageName||r.cropType||r.crop||'')===normName(cropName));
+  const cropAcres=parseFloat(match?.cropAcres||0) || 0;
+  return cropAcres;
+}
 function refreshIrrigationCropSelectors(){
   const cropNames=cropPlannerCropNames();
   document.querySelectorAll('#irr-entries select[id$="_cropYear"]').forEach(sel=>{
@@ -1730,7 +1813,9 @@ function refreshIrrigationCropSelectors(){
 function irrigationAreaDetails(idx){
   const manualAcres=parseFloat(document.getElementById(`irr_${idx}_irrigatedAcres`)?.value||0) || 0;
   if(manualAcres>0) return {acres:manualAcres, source:'Manual irrigated acres'};
-  const cropName=document.getElementById(`irr_${idx}_cropYear`)?.value||'';
+  const cropAcres=irrigationCropAcres(idx);
+  if(cropAcres>0) return {acres:cropAcres, source:'Crop acres'};
+  const cropName=irrigationCropName(idx);
   const bnames=boundariesForCropName(cropName);
   const boundaryAcres=parseFloat(boundaryAcresForNames(bnames)||0) || 0;
   if(boundaryAcres>0) return {acres:boundaryAcres, source:'Selected crop boundary acres'};
@@ -1831,6 +1916,8 @@ function addDyn(prefix, label, fields, values={}){
   if(prefix==='irr'){
     updateIrrigationRiceOptions(idx);
     refreshIrrigationCropSelectors();
+    const cropNameEl=document.getElementById(`irr_${idx}_cropName`);
+    if(cropNameEl && values && values.cropYear!==undefined && !cropNameEl.value) cropNameEl.value=values.cropYear;
     const cropEl=document.getElementById(`irr_${idx}_cropYear`);
     if(cropEl && values && values.cropYear!==undefined){ cropEl.setAttribute('data-pending-value',values.cropYear); refreshIrrigationCropSelectors(); cropEl.value=values.cropYear; }
     const methodEl=document.getElementById(`irr_${idx}_season`);
@@ -2317,7 +2404,7 @@ function secHasContent(id){
     if(el.readOnly || el.classList.contains('calculated-field')) continue;
     if(el.value&&String(el.value).trim())return true;
   }
-  const ynKeys={cp:['ipm','iwm','idm'],fert:['ninh','slowrel','vrt','nmp','4r'],irr:['wildlife']};
+  const ynKeys={cp:['ipm','iwm','idm'],fert:['ninh','slowrel','vrt','nmp','4r'],irr:['wildlife','rainfed']};
   if(ynKeys[id])for(const k of ynKeys[id])if(YN[k])return true;
   return false;
 }
@@ -2327,6 +2414,7 @@ function updateAll(){
   for(let i=1;i<=(EC['fert']||0);i++) if(document.getElementById(`fert-block-${i}`)) updateFertilizerUnits(i);
   for(let i=1;i<=(EC['cp']||0);i++) if(document.getElementById(`cp-block-${i}`)) updateIPMUnits(i);
   for(let i=1;i<=(EC['tillage']||0);i++) if(document.getElementById(`tillage-block-${i}`)) { syncTillageRating(i); updateGTIR(i); }
+  if (typeof updateRainFedDrainagePrompt === 'function') updateRainFedDrainagePrompt();
   // Section statuses
   SECTIONS.forEach(s=>{
     const el=document.getElementById('status-'+s.id);
@@ -2385,7 +2473,7 @@ function collectData(){
     cropProtection:{applications:[],ipm:YN['ipm']||'',iwm:YN['iwm']||'',idm:YN['idm']||''},
     fertilizer:{applications:[],ninh:YN['ninh']||'',slowRelease:YN['slowrel']||'',vrt:YN['vrt']||'',nmp:YN['nmp']||'',fourR:YN['4r']||''},
     manure:[],soilAmendments:[],harvest:[],coverCropping:[],tillage:[],noTillOnly:YN['notill']==='yes',
-    irrigation:{events:[],rainFedOnly:YN['rainfed']==='yes',wildlifeFlooding:YN['wildlife']||'',awdCount:(()=>{let t=0;document.querySelectorAll('#irr-entries [id$="_awdEvents"]').forEach(el=>{t+=parseFloat(el.value||0)||0;});return t||'';})()},
+    irrigation:{events:[],rainFedOnly:YN['rainfed']==='yes',rainFedCrops:(typeof collectRainFedCropRows==='function'?collectRainFedCropRows():[]),rainFedDrainageType:(typeof collectRainFedCropRows==='function'?(collectRainFedCropRows()[0]?.drainageType||''):''),wildlifeFlooding:YN['wildlife']||'',awdCount:(()=>{let t=0;document.querySelectorAll('#irr-entries [id$="_awdEvents"]').forEach(el=>{t+=parseFloat(el.value||0)||0;});return t||'';})()},
     soilSampling:{method:document.getElementById('soil-method')?.value||'',lab:document.getElementById('soil-lab')?.value||'',resultsRef:document.getElementById('soil-pdf')?.value||'',gridGeoRef:document.getElementById('soil-geo')?.value||'',boundaries:collectSoilSamplingRows()},
     firstPointOfAggregation:[],
     qualifyingPractices:PRACTICES.filter(p=>p.check()).map(p=>p.label)
@@ -2407,7 +2495,9 @@ function collectData(){
         entry.averageWaterDepthIn=Number(w.avgDepth.toFixed(2));
         entry.irrigatedAcresUsed=Number(w.irrigatedAcres.toFixed(2));
         entry.irrigatedAcresSource=w.irrigatedAcresSource;
-        entry.boundaryNames=boundariesForCropName(entry.cropYear||'');
+        entry.cropName=entry.cropName || entry.cropYear || '';
+        entry.cropYear=entry.cropYear || entry.cropName || '';
+        entry.boundaryNames=boundariesForCropName(entry.cropName||entry.cropYear||'');
         entry.boundaryAcres=boundaryAcresForNames(entry.boundaryNames);
         entry.estimatedDeviceCount=Number(w.estimatedDeviceCount.toFixed(0));
         entry.estimatedDeviceBasedFlowGPM=Number(w.estimatedGPM.toFixed(2));
@@ -2816,16 +2906,30 @@ function flattenForCSV(data){
 
   // Irrigation
   if (data.irrigation?.rainFedOnly) {
-    const r=baseCropForceRow(data,'Irrigation','no_irrigation_rain_fed',1);
-    r['Category']='No Irrigation — Rain Fed Only';
-    r['Notes']='Rain fed only — no irrigation applied for this program year';
-    rows.push(r);
+    const rainfedRows = (data.irrigation?.rainFedCrops && data.irrigation.rainFedCrops.length) ? data.irrigation.rainFedCrops : [{cropName:'',cropAcres:'',cropFields:'',drainageType:data.irrigation?.rainFedDrainageType||''}];
+    rainfedRows.forEach((a,i)=>{
+      const r=baseCropForceRow(data,'Irrigation','no_irrigation_rain_fed',i+1);
+      const cropName=a.cropName||'';
+      const bnames=a.boundaryNames || boundariesForCropName(cropName);
+      r['Crop']=cropName;
+      r['Acres']=a.cropAcres||a.boundaryAcres||'';
+      r['Field Name']=a.cropFields||bnames||'';
+      r['Boundary Names']=bnames;
+      r['Boundary Acres']=a.boundaryAcres || boundaryAcresForNames(bnames);
+      r['Category']='No Irrigation — Rain Fed Only';
+      r['Crop / Practice Type']='Rain Fed Only';
+      r['Drainage Type']=a.drainageType||data.irrigation?.rainFedDrainageType||'';
+      r['Notes']='Rain fed only — no irrigation applied for this program year';
+      rows.push(r);
+    });
   } else {
   (data.irrigation?.events||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'Irrigation','irrigation_event',i+1);
-    r['Crop']=a.cropYear||'';
-    const bnames=a.boundaryNames || boundariesForCropName(a.cropYear||'');
-    r['Field Name']=bnames;
+    const cropName=a.cropName||a.cropYear||'';
+    r['Crop']=cropName;
+    r['Acres']=a.cropAcres||a.irrigatedAcresUsed||a.irrigatedAcres||'';
+    r['Field Name']=a.cropFields||a.boundaryNames||'';
+    const bnames=a.boundaryNames || boundariesForCropName(cropName);
     r['Boundary Names']=bnames;
     r['Boundary Acres']=a.boundaryAcres || boundaryAcresForNames(bnames);
     r['Category']=a.season||'';
@@ -2859,6 +2963,7 @@ function flattenForCSV(data){
     r['Gallons per Cycle']=a.gallonsPerCycle||'';
     r['Gallons per Year']=a.gallonsPerYear||'';
     r['Acre-Feet Applied Annually']=a.acreFeetAnnually||'';
+    r['Notes']=a.notes||'';
     r['Wildlife Flooding Attested']=yesNo(data.irrigation.wildlifeFlooding);
     r['AWD Events Performed (Rice Only)']=data.irrigation.awdCount||'';
     rows.push(r);
@@ -3263,6 +3368,88 @@ function toggleNoTill() {
   updateAll();
 }
 
+let rainfedCropCounter = 0;
+
+function rainFedDrainageOptionsHtml(selected='') {
+  return ['', ...DRAINAGE_TYPES].map(o => `<option value="${escAttr(o)}" ${o===selected?'selected':''}>${escAttr(o || 'Select drainage type')}</option>`).join('');
+}
+
+function rainFedCropSeedRows() {
+  const rows = (typeof cropPlannerRows === 'function' ? cropPlannerRows() : []) || [];
+  return rows.map(r => ({
+    cropName: r.cropPageName || r.cropType || r.crop || '',
+    cropAcres: r.cropAcres || '',
+    cropFields: r.cropFields || '',
+    boundaryNames: r.boundaryNames || '',
+    drainageType: ''
+  })).filter(r => r.cropName || r.cropAcres || r.cropFields || r.boundaryNames);
+}
+
+function addRainFedCropRow(values={}) {
+  const wrap = document.getElementById('rainfed-crop-entries');
+  if(!wrap) return null;
+  rainfedCropCounter += 1;
+  const id = rainfedCropCounter;
+  const row = document.createElement('div');
+  row.className = 'rainfed-crop-row';
+  row.dataset.rainfedId = String(id);
+  row.style.cssText = 'display:grid;grid-template-columns:1.2fr .7fr .7fr 1.15fr auto;gap:8px;align-items:end;background:#FDFBF7;border:1px solid var(--line);border-radius:9px;padding:9px;';
+  row.innerHTML = `
+    <div><label class="fl" for="rainfed_${id}_cropName">Crop Name <span class="req">*</span></label><input id="rainfed_${id}_cropName" class="rainfed-crop-name" type="text" placeholder="e.g. Corn" value="${escAttr(values.cropName||'')}"></div>
+    <div><label class="fl" for="rainfed_${id}_cropAcres">Crop Acres</label><input id="rainfed_${id}_cropAcres" class="rainfed-crop-acres" type="number" step="0.01" placeholder="0" value="${escAttr(values.cropAcres||'')}"></div>
+    <div><label class="fl" for="rainfed_${id}_cropFields">Crop Fields</label><input id="rainfed_${id}_cropFields" class="rainfed-crop-fields" type="number" step="1" placeholder="0" value="${escAttr(values.cropFields||'')}"></div>
+    <div><label class="fl" for="rainfed_${id}_drainageType">Drainage Type <span class="req">*</span></label><select id="rainfed_${id}_drainageType" class="rainfed-drainage-type">${rainFedDrainageOptionsHtml(values.drainageType||'')}</select></div>
+    <div><button class="rm-btn" type="button" style="min-height:34px;" onclick="this.closest('.rainfed-crop-row').remove();updateRainFedDrainagePrompt();updateAll();">Remove</button></div>
+    <input type="hidden" class="rainfed-boundary-names" value="${escAttr(values.boundaryNames||'')}">
+  `;
+  wrap.appendChild(row);
+  row.querySelectorAll('input,select').forEach(el=>{
+    el.addEventListener('input',()=>{ updateRainFedDrainagePrompt(); updateAll(); });
+    el.addEventListener('change',()=>{ updateRainFedDrainagePrompt(); updateAll(); });
+  });
+  return row;
+}
+
+function seedRainFedCropRows(force=false) {
+  const wrap = document.getElementById('rainfed-crop-entries');
+  if(!wrap) return;
+  if(!force && wrap.querySelector('.rainfed-crop-row')) return;
+  if(force) wrap.innerHTML='';
+  const seeds = rainFedCropSeedRows();
+  if(seeds.length) seeds.forEach(r => addRainFedCropRow(r));
+  else addRainFedCropRow({cropName:'',cropAcres:document.getElementById('total-acres')?.value||'',cropFields:document.getElementById('total-fields')?.value||''});
+}
+
+function collectRainFedCropRows() {
+  const rows=[];
+  document.querySelectorAll('#rainfed-crop-entries .rainfed-crop-row').forEach(row=>{
+    const cropName=row.querySelector('.rainfed-crop-name')?.value||'';
+    const cropAcres=row.querySelector('.rainfed-crop-acres')?.value||'';
+    const cropFields=row.querySelector('.rainfed-crop-fields')?.value||'';
+    const drainageType=row.querySelector('.rainfed-drainage-type')?.value||'';
+    const boundaryNames=row.querySelector('.rainfed-boundary-names')?.value || boundariesForCropName(cropName);
+    if(cropName || cropAcres || cropFields || drainageType || boundaryNames) rows.push({cropName,cropAcres,cropFields,drainageType,boundaryNames,boundaryAcres:boundaryAcresForNames(boundaryNames)});
+  });
+  return rows;
+}
+
+function updateRainFedDrainagePrompt() {
+  const isRainFed = YN['rainfed'] === 'yes';
+  const prompt = document.getElementById('rainfed-drainage-prompt');
+  const status = document.getElementById('rainfed-drainage-status');
+  if (prompt) prompt.style.display = isRainFed ? 'block' : 'none';
+  if (isRainFed) seedRainFedCropRows(false);
+  const rows = collectRainFedCropRows();
+  const incomplete = isRainFed && (!rows.length || rows.some(r => !String(r.cropName||'').trim() || !String(r.drainageType||'').trim()));
+  if (status) status.style.display = incomplete ? 'block' : 'none';
+  document.querySelectorAll('#rainfed-crop-entries .rainfed-crop-row').forEach(row=>{
+    const crop = row.querySelector('.rainfed-crop-name');
+    const drainage = row.querySelector('.rainfed-drainage-type');
+    if(crop) crop.style.borderColor = (isRainFed && !crop.value.trim()) ? 'var(--danger)' : '';
+    if(drainage) drainage.style.borderColor = (isRainFed && !drainage.value) ? 'var(--danger)' : '';
+  });
+}
+
 function toggleRainFed() {
   const isRainFed = YN['rainfed'] === 'yes';
   const logSection = document.getElementById('irr-log-section');
@@ -3274,6 +3461,14 @@ function toggleRainFed() {
   const noBtn  = document.getElementById('yn-rainfed-no');
   if (yesBtn) { yesBtn.className = 'yn-btn' + (isRainFed ? ' yes' : ''); }
   if (noBtn)  { noBtn.className  = 'yn-btn' + (!isRainFed && YN['rainfed'] ? ' yes' : ''); }
+  updateRainFedDrainagePrompt();
+  if (isRainFed) {
+    seedRainFedCropRows(false);
+    const select = document.querySelector('#rainfed-crop-entries .rainfed-drainage-type');
+    const prompt = document.getElementById('rainfed-drainage-prompt');
+    if (prompt) prompt.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(()=>{ if(select && !select.value) select.focus(); }, 150);
+  }
   updateAll();
 }
 
