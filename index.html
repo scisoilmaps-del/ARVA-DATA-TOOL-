@@ -325,6 +325,8 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 .export-sec{display:none!important;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/shpjs@latest/dist/shp.min.js"></script>
 </head>
 <body>
 
@@ -355,8 +357,8 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 <main class="main">
 <div class="page-hdr">
 <h1>Arva program data requirements</h1>
-<p>Upload your lab results CSV and field boundary KML, then complete the remaining sections manually.</p>
-<div class="info-banner">📋 Upload the Haney soil sample CSV and field boundary KML, then complete the remaining sections manually.</div>
+<p>Upload your lab results CSV or Excel file and field boundary KML/SHP, then complete the remaining sections manually.</p>
+<div class="info-banner">📋 Upload the Haney soil sample CSV or Excel file and field boundary KML/SHP, then complete the remaining sections manually.</div>
 </div>
 <!-- FARM INFORMATION -->
 <div class="sec-card" id="card-farm">
@@ -384,28 +386,28 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 <!-- FILE UPLOADS -->
 <div class="upload-grid">
 <div class="ucard">
-<div class="ucard-hdr"><span>📊</span><div><h3>Lab results CSV</h3><span>Soil sample data · Haney / PLFA format</span></div></div>
+<div class="ucard-hdr"><span>📊</span><div><h3>Lab results CSV or Excel</h3><span>Soil sample data · Haney / PLFA format</span></div></div>
 <div class="ucard-body">
 <div class="uzone" id="csvZone">
 <div class="uzone-icon">📄</div>
-<span class="uzone-lbl">Lab results CSV</span>
-<div class="uzone-hint">Standard lab export format (.csv)</div>
+<span class="uzone-lbl">Lab results CSV or Excel</span>
+<div class="uzone-hint">Standard lab export format (.csv, .xlsx, .xls)</div>
 <button class="uzone-btn" onclick="event.stopPropagation();document.getElementById('csvInput').click()" type="button">Choose file</button>
-<input accept=".csv,.txt" class="file-real" id="csvInput" onchange="if(this.files &amp;&amp; this.files[0]) handleCSV(this.files[0])" type="file"/>
+<input accept=".csv,.txt,.xlsx,.xls" class="file-real" id="csvInput" onchange="if(this.files &amp;&amp; this.files[0]) handleCSV(this.files[0])" type="file"/>
 <div class="uzone-status" id="csvStatus"></div>
 </div>
 <div id="csv-preview-wrap"></div>
 </div>
 </div>
 <div class="ucard">
-<div class="ucard-hdr"><span>🗺️</span><div><h3>Field boundaries KML</h3><span>Polygon boundaries · Google Earth / GIS export</span></div></div>
+<div class="ucard-hdr"><span>🗺️</span><div><h3>Field boundaries KML/SHP</h3><span>Polygon boundaries · Google Earth / GIS/Shapefile export</span></div></div>
 <div class="ucard-body">
 <div class="uzone" id="kmlZone">
 <div class="uzone-icon">🗺️</div>
-<span class="uzone-lbl">Field boundaries KML</span>
-<div class="uzone-hint">Google Earth / GIS export (.kml)</div>
+<span class="uzone-lbl">Field boundaries KML/SHP</span>
+<div class="uzone-hint">Google Earth KML or zipped Shapefile (.kml, .zip, .shp)</div>
 <button class="uzone-btn" onclick="event.stopPropagation();document.getElementById('kmlInput').click()" type="button">Choose file</button>
-<input accept=".kml,.xml" class="file-real" id="kmlInput" onchange="if(this.files &amp;&amp; this.files[0]) handleKML(this.files[0])" type="file"/>
+<input accept=".kml,.xml,.zip,.shp,.geojson,.json" class="file-real" id="kmlInput" onchange="if(this.files &amp;&amp; this.files[0]) handleBoundaryFile(this.files[0])" type="file"/>
 <div class="uzone-status" id="kmlStatus"></div>
 </div>
 <div id="kml-preview-wrap"></div>
@@ -447,12 +449,12 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 <div class="sec-card" id="card-boundary">
 <div class="sec-hdr" onclick="toggle('boundary')">
 <div class="sec-ico">🗺️</div>
-<div class="sec-info"><div class="sec-title">Field boundaries</div><div class="sec-sub">KML polygon boundaries are extracted from the upload above</div></div>
+<div class="sec-info"><div class="sec-title">Field boundaries</div><div class="sec-sub">KML/SHP polygon boundaries are extracted from the upload above</div></div>
 <span class="sec-stat" id="status-boundary">Not started</span>
 <span class="chev" id="chev-boundary">▾</span>
 </div>
 <div class="sec-body" id="body-boundary">
-<div class="note">Upload the KML above. Boundary names and matched Haney samples will populate automatically; farm setup belongs in the Farm information section.</div>
+<div class="note">Upload the KML or zipped Shapefile above. Boundary names, matched Haney samples, and crop-boundary links populate automatically; farm setup belongs in the Farm information section.</div>
 <div id="kml-boundary-list"></div>
 </div>
 </div>
@@ -572,7 +574,7 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 <div class="sec-card" id="card-irr">
 <div class="sec-hdr" onclick="toggle('irr')">
 <div class="sec-ico">💦</div>
-<div class="sec-info"><div class="sec-title">Irrigation</div><div class="sec-sub">Pump, source, cycles, depth, and calculated water volume</div></div>
+<div class="sec-info"><div class="sec-title">Irrigation</div><div class="sec-sub">Per-crop irrigation, source, cycles, and calculated water volume</div></div>
 <span class="sec-stat" id="status-irr">Not started</span>
 <span class="chev" id="chev-irr">▾</span>
 </div>
@@ -589,7 +591,7 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 </div>
 <div id="irr-log-section">
   <div id="irr-entries"></div>
-  <button class="add-btn" onclick="addDyn('irr','Irrigation entry',irrF)">+ Add irrigation entry</button>
+  <button class="add-btn" onclick="addDyn('irr','Crop irrigation entry',irrF)">+ Add crop irrigation entry</button>
 </div>
 <div class="subsec"><div class="subsec-title">Additional attestations</div>
 <div class="yn-row"><span class="yn-lbl">Attest to any flooding for wildlife</span><div class="yn-btns"><button class="yn-btn" id="yn-wildlife-yes" onclick="setYN('wildlife','yes')">Yes</button><button class="yn-btn" id="yn-wildlife-no" onclick="setYN('wildlife','no')">No</button></div></div>
@@ -601,12 +603,12 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 <div class="sec-card" id="card-soil">
 <div class="sec-hdr" onclick="toggle('soil')">
 <div class="sec-ico">🔬</div>
-<div class="sec-info"><div class="sec-title">Soil sampling <span class="req">*</span></div><div class="sec-sub">Haney CSV + field-boundary KML sample matching</div></div>
+<div class="sec-info"><div class="sec-title">Soil sampling <span class="req">*</span></div><div class="sec-sub">Haney CSV/Excel + field-boundary KML/SHP sample matching</div></div>
 <span class="sec-stat" id="status-soil">Not started</span>
 <span class="chev" id="chev-soil">▾</span>
 </div>
 <div class="sec-body" id="body-soil">
-<div class="note">Upload the Haney results CSV and field-boundary KML above. The tool matches sample points to KML polygons the same way the Soil Health Report does, then rolls soil sampling evidence into the CSV export.</div>
+<div class="note">Upload the Haney results CSV or Excel file and field-boundary KML/SHP above. The tool matches sample points to boundaries the same way the Soil Health Report does, then rolls soil sampling evidence into the CSV export.</div>
 <div id="csv-sample-summary"></div>
 <div class="soil-review" id="soil-boundary-review"></div>
 <div class="soil-actions" id="soil-review-actions" style="display:none;">
@@ -692,12 +694,57 @@ body{background:var(--surface);margin:0;font-family:var(--font);}
 
 // ── STATE ──────────────────────────────────────────────────────
 let csvData = null, kmlData = null;
+let uploadedOriginalFiles = [];
 let importedToolData = {crop:0,fert:0,ipm:0,tillage:0};
 const boundaryState = {};
 const YN = {};
 const EC = {}; // entry counters
 
-// ── CSV PARSE ──────────────────────────────────────────────────
+
+function safeFileName(name, fallback='uploaded_file'){
+  return (name || fallback).replace(/[^a-z0-9._-]/gi,'_').replace(/^_+|_+$/g,'') || fallback;
+}
+function rememberUploadedFile(category, file, content){
+  const name = safeFileName(file && file.name, category || 'uploaded_file');
+  uploadedOriginalFiles = uploadedOriginalFiles.filter(f => !(f.category===category && f.name===name));
+  uploadedOriginalFiles.push({category, name, content});
+}
+function boundarySourceLabel(){
+  return window._rawBoundaryName ? `Uploaded boundary file (${window._rawBoundaryName})` : (kmlData ? 'Uploaded boundary file' : '');
+}
+function getFieldBoundaries(){ return (kmlData||[]).filter(isFieldBoundary); }
+function getCropBoundaryMap(){
+  const map={};
+  cropPlannerRows().forEach(cr=>{
+    const key=normName(cr.cropPageName || cr.cropType || cr.crop || '');
+    if(key && cr.boundaryNames) map[key]=cr.boundaryNames;
+  });
+  return map;
+}
+function boundariesForCropName(cropName){
+  const key=normName(cropName||'');
+  if(!key) return '';
+  const map=getCropBoundaryMap();
+  if(map[key]) return map[key];
+  const match=Object.keys(map).find(k => k===key || k.includes(key) || key.includes(k));
+  return match ? map[match] : '';
+}
+function boundaryAcresForNames(names){
+  const list=String(names||'').split(';').map(s=>normName(s)).filter(Boolean);
+  if(!list.length) return '';
+  const acres=getFieldBoundaries().filter(b=>list.includes(normName(b.name))).reduce((sum,b)=>sum+boundaryAcres(b),0);
+  return acres ? numVal(acres,2) : '';
+}
+function refreshCropBoundarySelectors(){
+  const fields=getFieldBoundaries();
+  document.querySelectorAll('.crop-boundaries2').forEach(sel=>{
+    const selected=[...sel.selectedOptions].map(o=>o.value);
+    sel.innerHTML=fields.map(b=>`<option value="${String(b.name).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}">${String(b.name).replace(/&/g,'&amp;').replace(/</g,'&lt;')} (${boundaryAcres(b).toFixed(1)} ac)</option>`).join('');
+    [...sel.options].forEach(o=>{ o.selected = selected.includes(o.value); });
+  });
+}
+
+// ── LAB RESULTS PARSE (CSV / EXCEL) ────────────────────────────
 const COL_ALIASES = {
   'Organic C:N':'Organic C:N Ratio','Organic C/N':'Organic C:N Ratio','C:N Ratio':'Organic C:N Ratio',
   'Total Organic C':'Total Organic Carbon','Organic Carbon':'Total Organic Carbon','Organic C':'Total Organic Carbon','TOC':'Total Organic Carbon',
@@ -773,6 +820,27 @@ function parseCSV(text) {
   }
   if(rows.length===0) throw new Error('No valid sample rows found — check that rows have a Sample ID or Latitude column');
   return {rows, headers: keyList.map(k=>k.key).filter(Boolean)};
+}
+
+
+function parseGeoJSONBoundaries(gj){
+  const features = gj.type === 'FeatureCollection' ? (gj.features || []) : (gj.type === 'Feature' ? [gj] : [{type:'Feature',properties:{},geometry:gj}]);
+  const res=[];
+  features.forEach((f,idx)=>{
+    const props=f.properties||{};
+    const geom=f.geometry||f;
+    const name=props.name||props.Name||props.NAME||props.field||props.Field||props.FIELD||props.id||props.ID||`Boundary ${idx+1}`;
+    const polys=[];
+    const addRing=ring=>{
+      const pts=(ring||[]).map(p=>[parseFloat(p[0]),parseFloat(p[1])]).filter(p=>isFinite(p[0])&&isFinite(p[1]));
+      if(pts.length>2) polys.push(pts);
+    };
+    if(geom && geom.type==='Polygon') (geom.coordinates||[]).slice(0,1).forEach(addRing);
+    if(geom && geom.type==='MultiPolygon') (geom.coordinates||[]).forEach(poly=>{ if(poly && poly[0]) addRing(poly[0]); });
+    if(polys.length) res.push({name:String(name).trim(),polygons:polys,id:idx,source:'geojson'});
+  });
+  if(!res.length) throw new Error('No polygon boundaries found in boundary file');
+  return res;
 }
 
 // ── KML PARSE ──────────────────────────────────────────────────
@@ -882,7 +950,7 @@ function collectSoilSamplingRows(){
       sampleMethod:method,
       lab:lab,
       resultsRef:ref,
-      geoReference:geo || 'Uploaded KML + Haney CSV latitude/longitude',
+      geoReference:geo || boundarySourceLabel() + ' + Haney CSV latitude/longitude',
       sampleIds:g.samples.map(s=>s['Sample ID']||'').filter(Boolean).join('; '),
       sampleDepths:[...new Set(g.samples.map(s=>`${s['Sample Depth From']||''}-${s['Sample Depth To']||''}`.replace(/^-|-$/g,'')))].filter(Boolean).join('; '),
       avgSOM:avgField(g.samples,'Organic Matter'),
@@ -921,7 +989,7 @@ function renderSoilSamplingReview(){
   const avgPH=csvData?avgField(csvData,'1:1 Soil pH'):null;
   const avgSH=csvData?avgField(csvData,'Soil Health Calculation'):null;
   let html=`<div class="soil-summary-grid">
-    <div class="soil-summary-card"><div class="sl">Haney samples</div><div class="sv">${totalSamples||'—'}</div><div class="ss">from uploaded CSV</div></div>
+    <div class="soil-summary-card"><div class="sl">Haney samples</div><div class="sv">${totalSamples||'—'}</div><div class="ss">from uploaded lab file</div></div>
     <div class="soil-summary-card"><div class="sl">Matched samples</div><div class="sv">${kmlData?matched:'—'}</div><div class="ss">inside KML field polygons</div></div>
     <div class="soil-summary-card"><div class="sl">Included fields</div><div class="sv">${kmlData?included:'—'}</div><div class="ss">exported to CSV</div></div>
     <div class="soil-summary-card"><div class="sl">Avg OM / pH / SH</div><div class="sv">${avgOM!=null?avgOM.toFixed(1)+'%':'—'} / ${avgPH!=null?avgPH.toFixed(1):'—'} / ${avgSH!=null?avgSH.toFixed(1):'—'}</div><div class="ss">farm average</div></div>
@@ -935,7 +1003,7 @@ function renderSoilSamplingReview(){
       </div>`;
     });
   }else{
-    html+=`<div class="note">KML not loaded yet. Soil values are summarized from the Haney CSV only; upload KML to match samples to fields.</div>`;
+    html+=`<div class="note">Boundary file not loaded yet. Soil values are summarized from the Haney lab file only; upload KML/SHP to match samples to fields.</div>`;
   }
   wrap.innerHTML=html;
   if(actions)actions.style.display=kmlData?'flex':'none';
@@ -1073,6 +1141,7 @@ function handleCropPlanCSV(file){
   const r=new FileReader();
   r.onload=ev=>{
     try{
+      rememberUploadedFile('crop_plan_csv', file, ev.target.result);
       const rows=parseToolCSV(ev.target.result,['Farm Name','Input Category','Crop Page Name','Crop Acres','Crop Fields','Planting Year','Crop','Planting Date','Harvest/Termination Date']);
       populateFarmInfoFromRows(rows);
       document.getElementById('crop-entries').innerHTML='';
@@ -1119,6 +1188,7 @@ function handleFertilityPlanCSV(file){
   const r=new FileReader();
   r.onload=ev=>{
     try{
+      rememberUploadedFile('fertility_csv', file, ev.target.result);
       const rows=parseToolCSV(ev.target.result,['Farm Name','Input Category','Crop Name','Application Date','Product Or Pack Name']);
       populateFarmInfoFromRows(rows);
       clearPrefixEntries('fert');
@@ -1155,6 +1225,7 @@ function handleIPMPlanCSV(file){
   const r=new FileReader();
   r.onload=ev=>{
     try{
+      rememberUploadedFile('ipm_csv', file, ev.target.result);
       const rows=parseToolCSV(ev.target.result,['Farm Name','Input Category','Crop Name','Application Date','Product Name']);
       populateFarmInfoFromRows(rows);
       clearPrefixEntries('cp');
@@ -1192,6 +1263,7 @@ function handleTillagePlanCSV(file){
   const r=new FileReader();
   r.onload=ev=>{
     try{
+      rememberUploadedFile('tillage_csv', file, ev.target.result);
       const rows=parseToolCSV(ev.target.result,['Crop Name','Crop Acres','Tillage Date','Implement','Tillage Type']);
       populateFarmInfoFromRows(rows);
       clearPrefixEntries('tillage');
@@ -1246,61 +1318,130 @@ function buildMapSVG(w,h,bounds,samples){
 }
 
 // ── FILE HANDLERS ──────────────────────────────────────────────
-function handleCSV(file){
-  const zone=document.getElementById('csvZone');
-  const status=document.getElementById('csvStatus');
-  const r=new FileReader();
-  r.onload=ev=>{
-    try{
-      window._rawCsvText=ev.target.result;
-      window._rawCsvName=file.name;
-      const result=parseCSV(ev.target.result);
-      csvData=result.rows;
-      zone.classList.add('loaded');zone.classList.remove('err');
-      status.textContent=`✓ ${csvData.length} sample${csvData.length!==1?'s':''} loaded from ${file.name}`;
-      renderCSVPreview(result);
-      populateSoilFromCSV();
-      renderSoilSamplingReview();
-      updateAll();
-    }catch(err){
-      zone.classList.add('err');zone.classList.remove('loaded');
-      status.textContent='✗ '+err.message;
-      csvData=null;
-      document.getElementById('csv-preview-wrap').innerHTML='';
-      renderSoilSamplingReview();
-    }
-  };
-  r.readAsText(file);
+function isExcelFile(file){
+  const name=(file && file.name ? file.name : '').toLowerCase();
+  return name.endsWith('.xlsx') || name.endsWith('.xls') || name.endsWith('.xlsm');
 }
 
-function handleKML(file){
+function loadXLSXLibrary(){
+  return new Promise((resolve,reject)=>{
+    if(typeof XLSX !== 'undefined') return resolve();
+    const existing=document.querySelector('script[data-arva-xlsx-loader="1"]');
+    if(existing){ existing.addEventListener('load',()=>resolve(),{once:true}); existing.addEventListener('error',()=>reject(new Error('Could not load Excel parser. Save the lab file as CSV or check internet connection.')),{once:true}); return; }
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s.dataset.arvaXlsxLoader='1';
+    s.onload=()=>resolve();
+    s.onerror=()=>reject(new Error('Could not load Excel parser. Save the lab file as CSV or check internet connection.'));
+    document.head.appendChild(s);
+  });
+}
+
+async function labFileToCSVText(file){
+  if(isExcelFile(file)){
+    await loadXLSXLibrary();
+    const buf=await file.arrayBuffer();
+    rememberUploadedFile('soil_lab_excel', file, buf);
+    const wb=XLSX.read(buf,{type:'array'});
+    const sheetName=wb.SheetNames && wb.SheetNames[0];
+    if(!sheetName) throw new Error('Excel workbook has no sheets');
+    const csv=XLSX.utils.sheet_to_csv(wb.Sheets[sheetName],{blankrows:false});
+    if(!csv.trim()) throw new Error('First Excel sheet is empty');
+    window._rawCsvText=csv;
+    window._rawCsvName=file.name;
+    return csv;
+  }
+  const text=await file.text();
+  rememberUploadedFile('soil_lab_csv', file, text);
+  window._rawCsvText=text;
+  window._rawCsvName=file.name;
+  return text;
+}
+
+async function handleCSV(file){
+  const zone=document.getElementById('csvZone');
+  const status=document.getElementById('csvStatus');
+  try{
+    status.textContent='⏳ Reading lab results…';
+    const text=await labFileToCSVText(file);
+    const result=parseCSV(text);
+    csvData=result.rows;
+    zone.classList.add('loaded');zone.classList.remove('err');
+    status.textContent=`✓ ${csvData.length} sample${csvData.length!==1?'s':''} loaded from ${file.name}`;
+    renderCSVPreview(result);
+    populateSoilFromCSV();
+    renderSoilSamplingReview();
+    updateAll();
+    syncUploadZones();
+  }catch(err){
+    zone.classList.add('err');zone.classList.remove('loaded');
+    status.textContent='✗ '+err.message;
+    csvData=null;
+    document.getElementById('csv-preview-wrap').innerHTML='';
+    renderSoilSamplingReview();
+    updateAll();
+    syncUploadZones();
+  }
+}
+
+async function handleBoundaryFile(file){
   const zone=document.getElementById('kmlZone');
   const status=document.getElementById('kmlStatus');
-  const r=new FileReader();
-  r.onload=ev=>{
-    try{
-      window._rawKmlText=ev.target.result;
+  try{
+    const lower=(file.name||'').toLowerCase();
+    let parsed=null;
+    if(lower.endsWith('.kml') || lower.endsWith('.xml')){
+      const text=await file.text();
+      window._rawKmlText=text;
       window._rawKmlName=file.name;
-      kmlData=parseKML(ev.target.result);
-      const fields=kmlData.filter(isFieldBoundary);
-      zone.classList.add('loaded');zone.classList.remove('err');
-      status.textContent=`✓ ${fields.length} field boundary/ies loaded from ${file.name}`;
-      renderKMLPreview(fields);
-      populateBoundaryFromKML(fields);
-      populateFarmInfoFromKML(fields);
-      renderSoilSamplingReview();
-      updateAll();
-    }catch(err){
-      zone.classList.add('err');zone.classList.remove('loaded');
-      status.textContent='✗ '+err.message;
-      kmlData=null;
-      document.getElementById('kml-preview-wrap').innerHTML='';
-      document.getElementById('kml-boundary-list').innerHTML='';
-      renderSoilSamplingReview();
+      window._rawBoundaryName=file.name;
+      window._rawBoundaryType='kml';
+      rememberUploadedFile('boundary_file', file, text);
+      parsed=parseKML(text);
+    } else if(lower.endsWith('.geojson') || lower.endsWith('.json')){
+      const text=await file.text();
+      window._rawKmlText=text;
+      window._rawKmlName=file.name;
+      window._rawBoundaryName=file.name;
+      window._rawBoundaryType='geojson';
+      rememberUploadedFile('boundary_file', file, text);
+      parsed=parseGeoJSONBoundaries(JSON.parse(text));
+    } else if(lower.endsWith('.zip') || lower.endsWith('.shp')){
+      const buf=await file.arrayBuffer();
+      window._rawKmlText=null;
+      window._rawKmlName=null;
+      window._rawBoundaryName=file.name;
+      window._rawBoundaryType=lower.endsWith('.zip')?'shapefile_zip':'shapefile';
+      rememberUploadedFile('boundary_file', file, buf);
+      if(typeof shp==='undefined') throw new Error('Shapefile parser did not load. Check internet connection or use KML.');
+      const gj=await shp(buf);
+      parsed=parseGeoJSONBoundaries(gj);
+    } else {
+      throw new Error('Use KML, GeoJSON, zipped Shapefile, or SHP. Zipped Shapefile is recommended so field names are preserved.');
     }
-  };
-  r.readAsText(file);
+    kmlData=parsed;
+    const fields=kmlData.filter(isFieldBoundary);
+    zone.classList.add('loaded');zone.classList.remove('err');
+    status.textContent=`✓ ${fields.length} field boundary/ies loaded from ${file.name}`;
+    renderKMLPreview(fields);
+    populateBoundaryFromKML(fields);
+    populateFarmInfoFromKML(fields);
+    refreshCropBoundarySelectors();
+    renderSoilSamplingReview();
+    updateAll();
+    syncUploadZones();
+  }catch(err){
+    zone.classList.add('err');zone.classList.remove('loaded');
+    status.textContent='✗ '+err.message;
+    kmlData=null;
+    document.getElementById('kml-preview-wrap').innerHTML='';
+    document.getElementById('kml-boundary-list').innerHTML='';
+    renderSoilSamplingReview();
+    updateAll();
+    syncUploadZones();
+  }
 }
+function handleKML(file){ return handleBoundaryFile(file); }
 
 // ── CSV PREVIEW ────────────────────────────────────────────────
 function renderCSVPreview(result){
@@ -1466,10 +1607,18 @@ const irrF=[
   {id:'cropPractice',label:'Crop / practice type',type:'select',opts:['Non-rice crop','Rice Farming'],req:true},
   {id:'season',label:'Water / irrigation method',type:'select',opts:BASE_IRRIGATION_METHODS,req:true},
   {id:'drainageType',label:'Drainage type',type:'select',opts:DRAINAGE_TYPES,req:false},
-  {id:'cropYear',label:'Crop / year',type:'text',req:false,placeholder:'e.g. Rice 2026'},
+  {id:'cropYear',label:'Crop irrigated',type:'select',opts:[],req:true},
+  {id:'irrigatedAcres',label:'Irrigated acres for this entry (optional)',type:'number',req:false,step:'0.01',placeholder:'Uses crop boundary acres if blank'},
   {id:'pumpName',label:'Pump name',type:'text',req:true,placeholder:'e.g. Weining Pump'},
   {id:'waterSource',label:'Water source',type:'select',opts:['Well','Surface water','Municipal','Tailwater recovery','Other'],req:true},
-  {id:'pumpGPM',label:'Pump GPM',type:'number',req:true,placeholder:'e.g. 1200'},
+  {id:'pumpGPM',label:'Pump / system GPM fallback',type:'number',req:true,placeholder:'e.g. 1200'},
+  {id:'pressureCompGPM',label:'Known total system / zone GPM (optional override)',type:'number',req:false,step:'0.01',placeholder:'Use when known'},
+  {id:'emitterGPM',label:'Emitter GPM (drip only — per emitter)',type:'number',req:false,step:'0.0001',placeholder:'e.g. 0.02'},
+  {id:'emitterSpacingFt',label:'Emitter spacing along line (ft, drip only)',type:'number',req:false,step:'0.01',placeholder:'e.g. 1'},
+  {id:'dripRowSpacingFt',label:'Drip line / row spacing (ft, drip only)',type:'number',req:false,step:'0.01',placeholder:'e.g. 5'},
+  {id:'sprinklerGPM',label:'Sprinkler/nozzle GPM (sprinkler/pivot only — per sprinkler)',type:'number',req:false,step:'0.01',placeholder:'e.g. 12'},
+  {id:'sprinklerSpacingFt',label:'Sprinkler spacing along lateral (ft, sprinkler/pivot only)',type:'number',req:false,step:'0.01',placeholder:'e.g. 40'},
+  {id:'sprinklerLateralSpacingFt',label:'Lateral / tower spacing (ft, sprinkler/pivot only)',type:'number',req:false,step:'0.01',placeholder:'e.g. 40'},
   {id:'minHoursCycle',label:'Min hrs / cycle',type:'number',req:true,placeholder:'e.g. 18'},
   {id:'maxHoursCycle',label:'Max hrs / cycle',type:'number',req:true,placeholder:'e.g. 30'},
   {id:'minCyclesYear',label:'Min cycles / year',type:'number',req:true,placeholder:'e.g. 4'},
@@ -1526,6 +1675,125 @@ function updateIrrigationRiceOptions(idx){
   if(!isRice && awdEl){
     awdEl.value='';
   }
+  updateIrrigationMethodFields(idx);
+}
+
+function irrigationMethodFlags(idx){
+  const method=String(document.getElementById(`irr_${idx}_season`)?.value||'').toLowerCase();
+  return {
+    isDrip: method.includes('drip'),
+    isSprinkler: method.includes('sprinkler') || method.includes('pivot')
+  };
+}
+
+function showIrrField(idx, id, show, clearWhenHidden=false){
+  const wrap=document.getElementById(`irr_${idx}_${id}_wrap`);
+  const el=document.getElementById(`irr_${idx}_${id}`);
+  if(wrap) wrap.style.display=show ? '' : 'none';
+  if(!show && clearWhenHidden && el) el.value='';
+}
+
+function updateIrrigationMethodFields(idx){
+  const {isDrip,isSprinkler}=irrigationMethodFlags(idx);
+  const showPrecision=isDrip || isSprinkler;
+  showIrrField(idx,'pressureCompGPM',showPrecision,false);
+  showIrrField(idx,'emitterGPM',isDrip,true);
+  showIrrField(idx,'emitterSpacingFt',isDrip,true);
+  showIrrField(idx,'dripRowSpacingFt',isDrip,true);
+  showIrrField(idx,'sprinklerGPM',isSprinkler,true);
+  showIrrField(idx,'sprinklerSpacingFt',isSprinkler,true);
+  showIrrField(idx,'sprinklerLateralSpacingFt',isSprinkler,true);
+}
+
+function cropPlannerCropNames(){
+  const names=[];
+  cropPlannerRows().forEach(r=>{
+    [r.cropPageName,r.cropType,r.crop].forEach(v=>{
+      const name=String(v||'').trim();
+      if(name && !names.some(n=>normName(n)===normName(name))) names.push(name);
+    });
+  });
+  return names;
+}
+
+function refreshIrrigationCropSelectors(){
+  const cropNames=cropPlannerCropNames();
+  document.querySelectorAll('#irr-entries select[id$="_cropYear"]').forEach(sel=>{
+    const current=sel.value || sel.getAttribute('data-pending-value') || '';
+    const opts=['',...cropNames];
+    if(current && !opts.some(o=>normName(o)===normName(current))) opts.push(current);
+    sel.innerHTML=opts.map(o=>`<option value="${escAttr(o)}">${escAttr(o || 'Select crop')}</option>`).join('');
+    if(current) sel.value=opts.find(o=>normName(o)===normName(current)) || current;
+  });
+}
+
+function irrigationAreaDetails(idx){
+  const manualAcres=parseFloat(document.getElementById(`irr_${idx}_irrigatedAcres`)?.value||0) || 0;
+  if(manualAcres>0) return {acres:manualAcres, source:'Manual irrigated acres'};
+  const cropName=document.getElementById(`irr_${idx}_cropYear`)?.value||'';
+  const bnames=boundariesForCropName(cropName);
+  const boundaryAcres=parseFloat(boundaryAcresForNames(bnames)||0) || 0;
+  if(boundaryAcres>0) return {acres:boundaryAcres, source:'Selected crop boundary acres'};
+  const farmAcres=getFarmAcres();
+  if(farmAcres>0) return {acres:farmAcres, source:'Total farm acres fallback'};
+  return {acres:0, source:'No area available'};
+}
+
+function irrigationRateDetails(idx){
+  const pumpGPM=parseFloat(document.getElementById(`irr_${idx}_pumpGPM`)?.value||0) || 0;
+  const pressureCompGPM=parseFloat(document.getElementById(`irr_${idx}_pressureCompGPM`)?.value||0) || 0;
+  const emitterGPM=parseFloat(document.getElementById(`irr_${idx}_emitterGPM`)?.value||0) || 0;
+  const emitterSpacing=parseFloat(document.getElementById(`irr_${idx}_emitterSpacingFt`)?.value||0) || 0;
+  const dripRowSpacing=parseFloat(document.getElementById(`irr_${idx}_dripRowSpacingFt`)?.value||0) || 0;
+  const sprinklerGPM=parseFloat(document.getElementById(`irr_${idx}_sprinklerGPM`)?.value||0) || 0;
+  const sprinklerSpacing=parseFloat(document.getElementById(`irr_${idx}_sprinklerSpacingFt`)?.value||0) || 0;
+  const sprinklerLateralSpacing=parseFloat(document.getElementById(`irr_${idx}_sprinklerLateralSpacingFt`)?.value||0) || 0;
+  const {isDrip,isSprinkler}=irrigationMethodFlags(idx);
+  const area=irrigationAreaDetails(idx);
+  const areaSqFt=area.acres*43560;
+
+  let estimatedDeviceCount=0;
+  let estimatedDeviceGPM=0;
+  let estimatedGPM=0;
+  let estimatedFlowSource='';
+  let applicationRateInHr=0;
+
+  if(isDrip && emitterGPM>0 && emitterSpacing>0 && dripRowSpacing>0 && areaSqFt>0){
+    estimatedDeviceCount=areaSqFt/(emitterSpacing*dripRowSpacing);
+    estimatedDeviceGPM=emitterGPM;
+    estimatedGPM=estimatedDeviceCount*emitterGPM;
+    estimatedFlowSource='Emitter GPM × estimated emitter count';
+    applicationRateInHr=(96.3*emitterGPM)/(emitterSpacing*dripRowSpacing);
+  }
+
+  if(isSprinkler && sprinklerGPM>0 && sprinklerSpacing>0 && sprinklerLateralSpacing>0 && areaSqFt>0){
+    estimatedDeviceCount=areaSqFt/(sprinklerSpacing*sprinklerLateralSpacing);
+    estimatedDeviceGPM=sprinklerGPM;
+    estimatedGPM=estimatedDeviceCount*sprinklerGPM;
+    estimatedFlowSource='Sprinkler/nozzle GPM × estimated sprinkler count';
+    applicationRateInHr=(96.3*sprinklerGPM)/(sprinklerSpacing*sprinklerLateralSpacing);
+  }
+
+  // Priority for close total water use:
+  // 1) known total system/zone GPM override, 2) estimated total flow from emitter/nozzle count, 3) pump/system GPM fallback.
+  let effectiveGPM=pumpGPM;
+  let flowSource=pumpGPM>0 ? 'Pump / system GPM fallback' : 'No flow entered';
+  if(estimatedGPM>0){
+    effectiveGPM=estimatedGPM;
+    flowSource=estimatedFlowSource;
+  }
+  if(pressureCompGPM>0){
+    effectiveGPM=pressureCompGPM;
+    flowSource='Known total system / zone GPM override';
+  }
+
+  return {
+    pumpGPM,pressureCompGPM,emitterGPM,emitterSpacing,dripRowSpacing,
+    sprinklerGPM,sprinklerSpacing,sprinklerLateralSpacing,
+    irrigatedAcres:area.acres,irrigatedAcresSource:area.source,
+    estimatedDeviceCount,estimatedDeviceGPM,estimatedGPM,
+    effectiveGPM,flowSource,applicationRateInHr
+  };
 }
 
 function runEntryCalculations(prefix, idx){
@@ -1540,7 +1808,7 @@ function runEntryCalculations(prefix, idx){
     }
     updateGTIR(idx);
   }
-  if(prefix==='irr') { updateIrrigationRiceOptions(idx); updateWaterLog(idx); }
+  if(prefix==='irr') { updateIrrigationRiceOptions(idx); updateIrrigationMethodFields(idx); updateWaterLog(idx); }
 }
 function addDyn(prefix, label, fields, values={}){
   const wrap=document.getElementById(`${prefix}-entries`);
@@ -1562,8 +1830,12 @@ function addDyn(prefix, label, fields, values={}){
   });
   if(prefix==='irr'){
     updateIrrigationRiceOptions(idx);
+    refreshIrrigationCropSelectors();
+    const cropEl=document.getElementById(`irr_${idx}_cropYear`);
+    if(cropEl && values && values.cropYear!==undefined){ cropEl.setAttribute('data-pending-value',values.cropYear); refreshIrrigationCropSelectors(); cropEl.value=values.cropYear; }
     const methodEl=document.getElementById(`irr_${idx}_season`);
     if(methodEl && values && values.season!==undefined) methodEl.value=values.season;
+    updateIrrigationMethodFields(idx);
   }
   fields.forEach(f=>{
     const el=document.getElementById(`${prefix}_${idx}_${f.id}`);
@@ -1689,7 +1961,8 @@ function getFarmAcres(){
 }
 
 function calcWaterLog(idx){
-  const gpm=parseFloat(document.getElementById(`irr_${idx}_pumpGPM`)?.value||0) || 0;
+  const rate=irrigationRateDetails(idx);
+  const gpm=rate.effectiveGPM;
   const avgHours=avgTwo(document.getElementById(`irr_${idx}_minHoursCycle`)?.value, document.getElementById(`irr_${idx}_maxHoursCycle`)?.value);
   const avgCycles=avgTwo(document.getElementById(`irr_${idx}_minCyclesYear`)?.value, document.getElementById(`irr_${idx}_maxCyclesYear`)?.value);
   const avgDepth=avgTwo(document.getElementById(`irr_${idx}_minWaterDepthIn`)?.value, document.getElementById(`irr_${idx}_maxWaterDepthIn`)?.value);
@@ -1697,16 +1970,21 @@ function calcWaterLog(idx){
   const gallonsCycle=gallonsHour*avgHours;
   const gallonsYear=gallonsCycle*avgCycles;
   const acreFeet=gallonsYear/325851;
-  const acres=getFarmAcres();
+  const acres=rate.irrigatedAcres || getFarmAcres();
   const floodEq=(acres>0 && avgDepth>0) ? gallonsYear/(acres*avgDepth*27154) : 0;
-  return {avgHours,avgCycles,avgDepth,gallonsHour,gallonsCycle,gallonsYear,acreFeet,floodEq};
+  return {...rate,avgHours,avgCycles,avgDepth,gallonsHour,gallonsCycle,gallonsYear,acreFeet,floodEq};
 }
 
 function updateWaterLog(idx){
   const v=calcWaterLog(idx);
   const box=document.getElementById(`irr_${idx}_water_calc`);
   if(!box) return;
-  box.innerHTML=`<strong>Calculated irrigation</strong><div class="calc-grid">
+  const cropName=document.getElementById(`irr_${idx}_cropYear`)?.value||'';
+  box.innerHTML=`<strong>Calculated irrigation per crop</strong><div class="calc-grid">
+    <div class="calc-pill"><span>Crop irrigated</span><b>${escAttr(cropName||'—')}</b></div>
+    <div class="calc-pill"><span>Total flow used</span><b>${fmtNum(v.effectiveGPM,2)} GPM</b></div>
+    <div class="calc-pill"><span>Total flow source</span><b>${escAttr(v.flowSource)}</b></div>
+    <div class="calc-pill"><span>Optional app. rate</span><b>${fmtNum(v.applicationRateInHr,2)} in/hr</b></div>
     <div class="calc-pill"><span>Avg hrs/cycle</span><b>${fmtNum(v.avgHours)}</b></div>
     <div class="calc-pill"><span>Avg cycles/year</span><b>${fmtNum(v.avgCycles)}</b></div>
     <div class="calc-pill"><span>Avg depth (in)</span><b>${fmtNum(v.avgDepth)}</b></div>
@@ -1714,7 +1992,9 @@ function updateWaterLog(idx){
     <div class="calc-pill"><span>G/cycle</span><b>${fmtNum(v.gallonsCycle,0)}</b></div>
     <div class="calc-pill"><span>G/year</span><b>${fmtNum(v.gallonsYear,0)}</b></div>
     <div class="calc-pill"><span>Acre-feet annually</span><b>${fmtNum(v.acreFeet,2)}</b></div>
-  </div>`;
+    <div class="calc-pill"><span>Irrigated acres used</span><b>${fmtNum(v.irrigatedAcres,2)}</b></div>
+    <div class="calc-pill"><span>Estimated emitters/nozzles</span><b>${fmtNum(v.estimatedDeviceCount,0)}</b></div>
+  </div><div class="calc-note" style="margin-top:8px;font-size:11.5px;color:var(--gray);line-height:1.35;">Each irrigation entry is tied to one crop. Total water use uses known total system/zone GPM first. If that is blank, drip uses emitter GPM × estimated emitter count and sprinkler/pivot uses nozzle GPM × estimated sprinkler count using that crop’s boundary acres when available. Pump/system GPM is the fallback.</div>`;
 }
 
 
@@ -1818,6 +2098,7 @@ function addCropPlannerCrop(values={}){
     <div><label class="fl">Crop Page Name</label><input class="crop-page-name2" placeholder="Corn, soybeans, wheat..." value="${esc(values.cropPageName)}"></div>
     <div><label class="fl">Crop Acres</label><input class="crop-acres2" type="number" min="0" step="0.01" placeholder="0" value="${esc(values.cropAcres)}"></div>
     <div><label class="fl">Crop Fields</label><input class="crop-fields2" type="number" min="0" step="1" placeholder="0" inputmode="numeric" value="${esc(values.cropFields)}"></div>
+    <div><label class="fl">Boundaries for this crop</label><select class="crop-boundaries2" multiple size="3"></select><div class="calc-help">Select one or more uploaded boundaries. Practices in other tabs inherit this by matching crop name.</div></div>
     <div><label class="fl">Crop Year</label><input class="crop-year2" type="number" min="1900" max="2200" step="1" placeholder="2026" value="${esc(values.cropYear)}"></div>
   </div>
   <div class="calc-box"><strong>Crop LRI summary</strong><div class="calc-grid">
@@ -1833,6 +2114,7 @@ function addCropPlannerCrop(values={}){
   <div class="entries2"></div>`;
   const wrap=document.getElementById('crop-entries');
   wrap.appendChild(el);
+  refreshCropBoundarySelectors();
   el.querySelector('.entries2').appendChild(createCropPlannerEntry('cash'));
   el.querySelector('.add-pre2').addEventListener('click',()=>ensureCropPlannerEntry(el,'pre'));
   el.querySelector('.add-post2').addEventListener('click',()=>ensureCropPlannerEntry(el,'post'));
@@ -1875,6 +2157,8 @@ function cropPlannerRows(){
     const cropPageName=(crop.querySelector('.crop-page-name2')?.value||'').trim();
     const cropAcres=crop.querySelector('.crop-acres2')?.value||'';
     const cropFields=crop.querySelector('.crop-fields2')?.value||'';
+    const boundaryNames=[...crop.querySelectorAll('.crop-boundaries2 option:checked')].map(o=>o.value).join('; ');
+    const boundaryAcres=boundaryAcresForNames(boundaryNames);
     const cropYear=crop.querySelector('.crop-year2')?.value||'';
     const totalCropLri=lriNum(crop.querySelector('.crop-lri-total2')?.textContent);
     const annualCropLivingRootPct=Math.max(0,totalCropLri)*100;
@@ -1912,6 +2196,8 @@ function cropPlannerRows(){
       cropPageName,
       cropAcres,
       cropFields,
+      boundaryNames,
+      boundaryAcres,
       // Cash crop
       plantingDate:cash.plantingDate||'',
       harvestDate:cash.harvestDate||'',
@@ -1979,6 +2265,7 @@ function updateCropPlanner(){
       <div class="crop-mini-stat"><div class="sl">Weighted LRI</div><div class="sv">${lriFmt(weightedLri,3)}</div><div class="ss">acre-weighted</div></div>
       <div class="crop-mini-stat"><div class="sl">Living root days</div><div class="sv">${totalRoot}</div><div class="ss">${entryCount} entered window(s)</div></div>`;
   }
+  refreshIrrigationCropSelectors();
 }
 function calcLivingRootDaysForCropRow(i){ return 0; }
 function updateCropLRI(i){ updateCropPlanner(); }
@@ -2092,8 +2379,8 @@ function collectData(){
     meta:{program:'ARVA',generated:new Date().toISOString()},
     files:{csvLoaded:!!csvData,csvSampleCount:csvData?csvData.length:0,kmlLoaded:!!kmlData,kmlBoundaryCount:kmlData?kmlData.filter(isFieldBoundary).length:0,kmlBoundaryNames:kmlData?kmlData.filter(isFieldBoundary).map(b=>b.name):[],importedToolData:{...importedToolData}},
     farmInfo:{farmName:document.getElementById('farm-name')?.value||'',totalAcres:document.getElementById('total-acres')?.value||'',totalFields:document.getElementById('total-fields')?.value||'',cropCount:document.getElementById('crop-count')?.value||'',planningYear:document.getElementById('planning-year')?.value||'',preparedBy:document.getElementById('prepared-by')?.value||''},
-    boundary:{source:kmlData?'Uploaded KML':'',fieldNames:kmlData?kmlData.filter(isFieldBoundary).map(b=>b.name):[]},
-    field:{grower:document.getElementById('prepared-by')?.value||'',farm:document.getElementById('farm-name')?.value||'',field:kmlData?kmlData.filter(isFieldBoundary).map(b=>b.name).join('; '):'',shapefileRef:kmlData?'Uploaded KML':''},
+    boundary:{source:boundarySourceLabel(),fieldNames:kmlData?kmlData.filter(isFieldBoundary).map(b=>b.name):[]},
+    field:{grower:document.getElementById('prepared-by')?.value||'',farm:document.getElementById('farm-name')?.value||'',field:kmlData?kmlData.filter(isFieldBoundary).map(b=>b.name).join('; '):'',shapefileRef:boundarySourceLabel()},
     cropRotation:[],
     cropProtection:{applications:[],ipm:YN['ipm']||'',iwm:YN['iwm']||'',idm:YN['idm']||''},
     fertilizer:{applications:[],ninh:YN['ninh']||'',slowRelease:YN['slowrel']||'',vrt:YN['vrt']||'',nmp:YN['nmp']||'',fourR:YN['4r']||''},
@@ -2118,6 +2405,15 @@ function collectData(){
         entry.averageHoursPerCycle=Number(w.avgHours.toFixed(2));
         entry.averageCyclesPerYear=Number(w.avgCycles.toFixed(2));
         entry.averageWaterDepthIn=Number(w.avgDepth.toFixed(2));
+        entry.irrigatedAcresUsed=Number(w.irrigatedAcres.toFixed(2));
+        entry.irrigatedAcresSource=w.irrigatedAcresSource;
+        entry.boundaryNames=boundariesForCropName(entry.cropYear||'');
+        entry.boundaryAcres=boundaryAcresForNames(entry.boundaryNames);
+        entry.estimatedDeviceCount=Number(w.estimatedDeviceCount.toFixed(0));
+        entry.estimatedDeviceBasedFlowGPM=Number(w.estimatedGPM.toFixed(2));
+        entry.effectiveFlowGPM=Number(w.effectiveGPM.toFixed(2));
+        entry.flowRateSource=w.flowSource;
+        entry.applicationRateInPerHr=Number(w.applicationRateInHr.toFixed(2));
         entry.gallonsPerHour=Number(w.gallonsHour.toFixed(0));
         entry.gallonsPerCycle=Number(w.gallonsCycle.toFixed(0));
         entry.gallonsPerYear=Number(w.gallonsYear.toFixed(0));
@@ -2187,6 +2483,8 @@ function baseCropForceRow(data, section, recordType, i){
     'Record Type': recordType,
     'Record Number': i,
     'Field Name': '',
+    'Boundary Names': '',
+    'Boundary Acres': '',
     'Crop': '',
     'Crop Year': '',
     'Acres': '',
@@ -2249,6 +2547,20 @@ function baseCropForceRow(data, section, recordType, i){
     'Drainage Type': '',
     'Water Source': '',
     'Pump Flow Rate (GPM)': '',
+    'Pressure Compensator GPM': '',
+    'Irrigated Acres Used': '',
+    'Irrigated Acres Source': '',
+    'Estimated Emitters or Sprinklers': '',
+    'Emitter GPM': '',
+    'Emitter Spacing (ft)': '',
+    'Drip Line / Row Spacing (ft)': '',
+    'Sprinkler GPM': '',
+    'Sprinkler Spacing (ft)': '',
+    'Sprinkler Lateral Spacing (ft)': '',
+    'Estimated Device-Based Flow (GPM)': '',
+    'Effective Flow Rate Used (GPM)': '',
+    'Flow Rate Source': '',
+    'Application Rate (in/hr)': '',
     'Min Hours per Cycle': '',
     'Max Hours per Cycle': '',
     'Average Hours per Cycle': '',
@@ -2293,7 +2605,9 @@ function flattenForCSV(data){
     r['Crop']=cr.cropType||'';
     r['Crop Year']=cr.year||'';
     r['Acres']=cr.cropAcres||'';
-    r['Field Name']=cr.cropFields||'';
+    r['Field Name']=cr.cropFields||cr.boundaryNames||'';
+    r['Boundary Names']=cr.boundaryNames||'';
+    r['Boundary Acres']=cr.boundaryAcres||'';
     r['Variety']=cr.variety||'';
     r['Seeding Rate (lb/ac)']=cr.seedingRate||'';
     // Cash crop window
@@ -2356,7 +2670,10 @@ function flattenForCSV(data){
     csvData.forEach((s, i) => {
       const r = baseCropForceRow(data,'Soil Sampling','haney_soil_sample', i+1);
       // Field identity
-      r['Field Name']      = sampleStr(s,'Field Name','Field','Sample ID 1','Results For');
+      const matchedBoundaries=getFieldBoundaries().filter(b=>sampleMatchesBoundary(s,b)).map(b=>b.name).join('; ');
+      r['Field Name']      = matchedBoundaries || sampleStr(s,'Field Name','Field','Sample ID 1','Results For');
+      r['Boundary Names']  = matchedBoundaries;
+      r['Boundary Acres']  = boundaryAcresForNames(matchedBoundaries);
       r['Sample IDs']      = sampleStr(s,'Sample ID','Sample ID 1','Lab No','Sample No');
       r['Sample Year']     = sampleStr(s,'Sampling Date','Date Recd','Date Rept','Sample Date').slice(0,4)||'';
       r['Sample Method']   = soilMethod;
@@ -2414,7 +2731,10 @@ function flattenForCSV(data){
   (data.cropProtection?.applications||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'Crop Protection','crop_protection_application',i+1);
     r['Crop']=a.crop||a.cropName||'';
-    r['Field Name']=a.field||a.cropFields||'';
+    const bnames=boundariesForCropName(a.crop||a.cropName||'');
+    r['Field Name']=bnames || a.field || a.cropFields || '';
+    r['Boundary Names']=bnames;
+    r['Boundary Acres']=boundaryAcresForNames(bnames);
     r['Date']=a.date||'';
     r['Product or Activity']=a.name||'';
     r['Category']=a.type||'';
@@ -2443,6 +2763,8 @@ function flattenForCSV(data){
       r['Applied with Variable Rate Technology']= yesNo(YN['vrt']);
       r['Documented on Nutrient Management Plan']= yesNo(YN['nmp']);
       r['4R Compliant Application']= yesNo(YN['4r']);
+      const bnames=boundariesForCropName(r['Crop'] || r['Crop Name'] || r['Crop Page Name']);
+      if(bnames){ r['Field Name']=bnames; r['Boundary Names']=bnames; r['Boundary Acres']=boundaryAcresForNames(bnames); }
       rows.push(r);
     });
   }
@@ -2451,6 +2773,10 @@ function flattenForCSV(data){
   (data.harvest||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'Harvest','harvest_event',i+1);
     r['Crop']=a.crop||'';
+    const bnames=boundariesForCropName(a.crop||'');
+    r['Field Name']=bnames;
+    r['Boundary Names']=bnames;
+    r['Boundary Acres']=boundaryAcresForNames(bnames);
     r['Date']=a.date||'';
     r['Product or Activity']=a.type||'';
     r['Rate']=a.yield||'';
@@ -2471,7 +2797,11 @@ function flattenForCSV(data){
     (data.tillage||[]).forEach((a,i)=>{
       const r=baseCropForceRow(data,'Tillage','tillage_event',i+1);
       r['Crop']=a.crop||a.cropName||'';
+      const bnames=boundariesForCropName(a.crop||a.cropName||'');
       r['Acres']=a.area||a.cropAcres||'';
+      r['Field Name']=bnames || a.cropFields || '';
+      r['Boundary Names']=bnames;
+      r['Boundary Acres']=boundaryAcresForNames(bnames);
       r['Date']=a.date||'';
       r['Product or Activity']=a.implement||'';
       r['Tillage Implement']=a.implement||'';
@@ -2494,12 +2824,30 @@ function flattenForCSV(data){
   (data.irrigation?.events||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'Irrigation','irrigation_event',i+1);
     r['Crop']=a.cropYear||'';
+    const bnames=a.boundaryNames || boundariesForCropName(a.cropYear||'');
+    r['Field Name']=bnames;
+    r['Boundary Names']=bnames;
+    r['Boundary Acres']=a.boundaryAcres || boundaryAcresForNames(bnames);
     r['Category']=a.season||'';
     r['Product or Activity']=a.pumpName||'';
     r['Crop / Practice Type']=a.cropPractice||'';
     r['Drainage Type']=a.drainageType||'';
     r['Water Source']=a.waterSource||'';
     r['Pump Flow Rate (GPM)']=a.pumpGPM||'';
+    r['Pressure Compensator GPM']=a.pressureCompGPM||'';
+    r['Irrigated Acres Used']=a.irrigatedAcresUsed||a.irrigatedAcres||'';
+    r['Irrigated Acres Source']=a.irrigatedAcresSource||'';
+    r['Estimated Emitters or Sprinklers']=a.estimatedDeviceCount||'';
+    r['Emitter GPM']=a.emitterGPM||'';
+    r['Emitter Spacing (ft)']=a.emitterSpacingFt||'';
+    r['Drip Line / Row Spacing (ft)']=a.dripRowSpacingFt||'';
+    r['Sprinkler GPM']=a.sprinklerGPM||'';
+    r['Sprinkler Spacing (ft)']=a.sprinklerSpacingFt||'';
+    r['Sprinkler Lateral Spacing (ft)']=a.sprinklerLateralSpacingFt||'';
+    r['Estimated Device-Based Flow (GPM)']=a.estimatedDeviceBasedFlowGPM||'';
+    r['Effective Flow Rate Used (GPM)']=a.effectiveFlowGPM||'';
+    r['Flow Rate Source']=a.flowRateSource||'';
+    r['Application Rate (in/hr)']=a.applicationRateInPerHr||'';
     r['Min Hours per Cycle']=a.minHoursCycle||'';
     r['Max Hours per Cycle']=a.maxHoursCycle||'';
     r['Average Hours per Cycle']=a.averageHoursPerCycle||'';
@@ -2521,6 +2869,10 @@ function flattenForCSV(data){
   (data.firstPointOfAggregation||[]).forEach((a,i)=>{
     const r=baseCropForceRow(data,'First Point of Aggregation','fpa_delivery',i+1);
     r['Crop']=a.cropName||'';
+    const bnames=boundariesForCropName(a.cropName||'');
+    r['Field Name']=bnames;
+    r['Boundary Names']=bnames;
+    r['Boundary Acres']=boundaryAcresForNames(bnames);
     r['Product or Activity']=a.name||'';
     r['Delivery Point Type']=a.type||'';
     r['Delivery Location']=a.location||'';
@@ -2602,19 +2954,15 @@ function exportZip() {
       folder.file('arva_crop_force_' + farm + '.csv', csv);
       setProgress('⏳ Added CSV data…');
 
-      // 2. Original KML file
-      if (window._rawKmlText) {
-        const kmlName = (window._rawKmlName || 'field_boundaries.kml').replace(/[^a-z0-9._-]/gi, '_');
-        folder.file(kmlName, window._rawKmlText);
-      }
+      // 2. Original uploaded files: boundary file + every CSV imported into the tool
+      const originals = folder.folder('original_uploads');
+      (uploadedOriginalFiles || []).forEach((f, idx) => {
+        const prefix = safeFileName(f.category || 'upload');
+        const name = safeFileName(f.name || ('uploaded_file_' + (idx+1)));
+        originals.file(prefix + '__' + name, f.content);
+      });
 
-      // 3. Original Haney/soil CSV
-      if (window._rawCsvText) {
-        const csvName = (window._rawCsvName || 'haney_soil_results.csv').replace(/[^a-z0-9._-]/gi, '_');
-        folder.file(csvName, window._rawCsvText);
-      }
-
-      // 4. Submission summary JSON
+      // 3. Submission summary JSON
       const summary = buildSubmissionSummary(data);
       folder.file('submission_summary_' + farm + '.json', JSON.stringify(summary, null, 2));
 
@@ -2736,6 +3084,8 @@ function buildSubmissionSummary(data) {
       kmlBoundaryCount: data.files?.kmlBoundaryCount || 0,
       soilCsvUploaded: !!window._rawCsvText,
       soilCsvFileName: window._rawCsvName || null,
+      boundaryFileName: window._rawBoundaryName || window._rawKmlName || null,
+      originalUploads: (uploadedOriginalFiles||[]).map(f=>({category:f.category,name:f.name})),
       soilSampleCount: data.files?.csvSampleCount || 0,
     },
     nutrientManagement: nmSummary,
@@ -2765,8 +3115,9 @@ function buildSubmissionSummary(data) {
 
 function buildReadme(farm, data) {
   const now = new Date().toLocaleString();
-  const kmlFile = window._rawKmlName ? `- ${window._rawKmlName} — original field boundary KML file` : '';
-  const soilFile = window._rawCsvText ? `- ${window._rawCsvName || 'soil_results.csv'} — original Haney/PLFA soil sample results` : '';
+  const kmlFile = window._rawBoundaryName ? `- original_uploads/${safeFileName('boundary_file')}__${safeFileName(window._rawBoundaryName)} — original boundary file` : '';
+  const soilFile = window._rawCsvText ? `- original_uploads/${safeFileName('soil_csv')}__${safeFileName(window._rawCsvName || 'soil_results.csv')} — original Haney/PLFA soil sample results` : '';
+  const otherFiles = (uploadedOriginalFiles||[]).filter(f=>!['boundary_file','soil_csv'].includes(f.category)).map(f=>`- original_uploads/${safeFileName(f.category)}__${safeFileName(f.name)} — original uploaded ${f.category.replace(/_/g,' ')}`).join('\n');
   return `ARVA Program Data Submission Package
 ======================================
 Farm: ${data.farmInfo?.farmName || '(not entered)'}
@@ -2779,6 +3130,7 @@ FILES IN THIS PACKAGE
 - arva_crop_force_${farm}.csv — main data file for upload to ARVA Crop Force
 ${kmlFile}
 ${soilFile}
+${otherFiles}
 - submission_summary_${farm}.json — structured summary of all entered data
 - README.txt — this file
 
@@ -2787,7 +3139,7 @@ UPLOAD INSTRUCTIONS
 1. Log in to the ARVA Crop Force platform
 2. Navigate to your farm submission
 3. Upload arva_crop_force_${farm}.csv as the primary data file
-4. Upload the KML file separately when prompted for field boundaries
+4. Upload the KML/SHP boundary file separately when prompted for field boundaries
 5. Keep this ZIP as your local record of the submission
 
 NOTES
@@ -2801,7 +3153,7 @@ Soil Samples Loaded: ${data.files?.csvSampleCount || 0}
 
 function clearAll(){
   if(!confirm('Clear all data and uploaded files?'))return;
-  csvData=null;kmlData=null; importedToolData={crop:0,fert:0,ipm:0,tillage:0};
+  csvData=null;kmlData=null; uploadedOriginalFiles=[]; window._rawBoundaryName=null; window._rawBoundaryType=null; importedToolData={crop:0,fert:0,ipm:0,tillage:0};
   document.querySelectorAll('input,select,textarea').forEach(el=>el.value='');
   ['crop-entries','cp-entries','fert-entries','manure-entries','amend-entries','harvest-entries','tillage-entries','irr-entries','fpa-entries','kml-boundary-list','csv-sample-summary'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
   Object.keys(YN).forEach(k=>delete YN[k]);
@@ -2838,7 +3190,7 @@ function bindMainUploads(){
     csv.onchange=function(){ if(this.files && this.files[0]) handleCSV(this.files[0]); };
   }
   if(kml){
-    kml.onchange=function(){ if(this.files && this.files[0]) handleKML(this.files[0]); };
+    kml.onchange=function(){ if(this.files && this.files[0]) handleBoundaryFile(this.files[0]); };
   }
   if(csvZone && csv && csvZone.dataset.uploadClickBound!=='1'){
     csvZone.dataset.uploadClickBound='1';
@@ -2860,7 +3212,7 @@ function bindMainUploads(){
 window.addEventListener('DOMContentLoaded',()=>{
   bindMainUploads();
   const csvInput=document.getElementById('csvInput'); if(csvInput) csvInput.addEventListener('change',e=>{if(e.target.files[0])handleCSV(e.target.files[0]);});
-  const kmlInput=document.getElementById('kmlInput'); if(kmlInput) kmlInput.addEventListener('change',e=>{if(e.target.files[0])handleKML(e.target.files[0]);});
+  const kmlInput=document.getElementById('kmlInput'); if(kmlInput) kmlInput.addEventListener('change',e=>{if(e.target.files[0])handleBoundaryFile(e.target.files[0]);});
 
   ['cropPlan','ipmPlan','fertPlan','tillagePlan'].forEach(base=>{
     const input=document.getElementById(base+'Input');
@@ -2880,8 +3232,8 @@ window.addEventListener('DOMContentLoaded',()=>{
 const WZ_STEPS = [
   { id:'intro',    label:'Program Overview', icon:'📋', title:'ARVA Program Overview', sub:'What you need to submit and how this tool works' },
   { id:'farm',     label:'Farm Info',      icon:'🏡', title:'Farm information',        sub:'Basic farm details used across the entire ARVA submission' },
-  { id:'uploads',  label:'Upload Files',   icon:'📂', title:'Upload data files',       sub:'Upload your Haney lab results CSV and field boundary KML file' },
-  { id:'boundary', label:'Field Boundaries',icon:'🗺️',title:'Field boundaries',  sub:'KML polygon boundaries are extracted automatically from your upload' },
+  { id:'uploads',  label:'Upload Files',   icon:'📂', title:'Upload data files',       sub:'Upload your Haney lab results CSV and field boundary KML or Shapefile' },
+  { id:'boundary', label:'Field Boundaries',icon:'🗺️',title:'Field boundaries',  sub:'KML/SHP polygon boundaries are extracted automatically from your upload' },
   { id:'soil',     label:'Soil Sampling',  icon:'🔬', title:'Soil sampling',           sub:'Review matched soil samples and enter sampling method details', required:true },
   { id:'general',  label:'Crop Plan',      icon:'🌾', title:'Crop plan',               sub:'Cash crop windows, cover crops, and Living Root Index' },
   { id:'cp',       label:'Crop Protection',icon:'🛡️', title:'Crop protection (IPM)', sub:'Pesticide and herbicide applications aligned to your IPM plan' },
@@ -3105,7 +3457,7 @@ function buildStepBody(step, i) {
             <div class="rq-item">Crop protection (IPM/IWM/IDM)</div>
             <div class="rq-item">Fertilizer and nutrient inputs</div>
             <div class="rq-item">Tillage events and depth</div>
-            <div class="rq-item">Irrigation method and volume</div>
+            <div class="rq-item">Per-crop irrigation method and volume</div>
             <div class="rq-item">Harvest yield and residue</div>
             <div class="rq-item">First point of aggregation</div>
           </div>
@@ -3245,7 +3597,7 @@ function buildStepBody(step, i) {
             <div class="rq-item">Crop protection &mdash; IPM/IWM/IDM</div>
             <div class="rq-item">Fertilizer, manure &amp; nutrient inputs</div>
             <div class="rq-item">Tillage events, depth &amp; implement</div>
-            <div class="rq-item">Irrigation method, source &amp; volume</div>
+            <div class="rq-item">Per-crop irrigation method, source &amp; volume</div>
             <div class="rq-item">Harvest yield, residue &amp; type</div>
             <div class="rq-item">First point of aggregation</div>
           </div>
@@ -3273,12 +3625,12 @@ function buildStepBody(step, i) {
     return `
       <div class="wz-upload-pair">
         <div class="wz-ucard">
-          <div class="wz-ucard-hdr"><span>📊</span><div><h3>Lab results CSV</h3><span>Haney / PLFA format</span></div></div>
+          <div class="wz-ucard-hdr"><span>📊</span><div><h3>Lab results CSV or Excel</h3><span>Haney / PLFA format</span></div></div>
           <div class="wz-ucard-body">
             <div class="uzone" id="csvZone2">
               <div class="uzone-icon">📄</div>
-              <span class="uzone-lbl">Lab results CSV</span>
-              <div class="uzone-hint">Standard lab export (.csv)</div>
+              <span class="uzone-lbl">Lab results CSV or Excel</span>
+              <div class="uzone-hint">Standard lab export (.csv, .xlsx, .xls)</div>
               <button class="uzone-btn" onclick="event.stopPropagation();document.getElementById('csvInput').click()" type="button">Choose file</button>
               <div class="uzone-status" id="csvStatus2"></div>
             </div>
@@ -3286,12 +3638,12 @@ function buildStepBody(step, i) {
           </div>
         </div>
         <div class="wz-ucard">
-          <div class="wz-ucard-hdr"><span>🗺️</span><div><h3>Field boundaries KML</h3><span>Google Earth / GIS export</span></div></div>
+          <div class="wz-ucard-hdr"><span>🗺️</span><div><h3>Field boundaries KML/SHP</h3><span>Google Earth / GIS / Shapefile export</span></div></div>
           <div class="wz-ucard-body">
             <div class="uzone" id="kmlZone2">
               <div class="uzone-icon">🗺️</div>
-              <span class="uzone-lbl">Field boundaries KML</span>
-              <div class="uzone-hint">Google Earth / GIS export (.kml)</div>
+              <span class="uzone-lbl">Field boundaries KML/SHP</span>
+              <div class="uzone-hint">Google Earth KML or zipped Shapefile (.kml, .zip, .shp)</div>
               <button class="uzone-btn" onclick="event.stopPropagation();document.getElementById('kmlInput').click()" type="button">Choose file</button>
               <div class="uzone-status" id="kmlStatus2"></div>
             </div>
@@ -3336,12 +3688,12 @@ function buildStepBody(step, i) {
         <div class="exp-card exp-card-primary">
           <div>
             <h3>📦 Full ZIP Package</h3>
-            <p>Everything in one download — your CSV data, original KML boundary file, and Haney soil results.</p>
+            <p>Everything in one download — your CSV data, original KML/SHP boundary file, Haney soil results, and every original uploaded tool CSV.</p>
           </div>
           <div class="exp-badge-list">
             <div class="exp-badge"><span>✓</span> ARVA Crop Force CSV</div>
-            <div class="exp-badge"><span>✓</span> Field boundaries KML (if uploaded)</div>
-            <div class="exp-badge"><span>✓</span> Haney soil results CSV (if uploaded)</div>
+            <div class="exp-badge"><span>✓</span> Field boundaries KML/SHP (if uploaded)</div>
+            <div class="exp-badge"><span>✓</span> Haney soil results CSV + all tool CSV uploads</div>
             <div class="exp-badge"><span>✓</span> Submission summary JSON</div>
           </div>
           <button class="btn-exp-primary" onclick="exportZip()">⬇ Download ZIP Package</button>
